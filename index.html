@@ -670,15 +670,19 @@
           />
         </div>
         <div class="view-toggle">
-          <button class="view-btn active" data-view="calendar">Calendar</button>
-          <button class="view-btn" data-view="table">Table</button>
+          <button class="view-btn" data-view="calendar">Calendar</button>
+          <button class="view-btn active" data-view="table">Table</button>
         </div>
         <div class="results-count" id="results-count"></div>
       </div>
     </div>
 
-    <div class="calendar-container" id="calendar-view"></div>
-    <div class="table-container" id="table-view" style="display: none"></div>
+    <div
+      class="calendar-container"
+      id="calendar-view"
+      style="display: none"
+    ></div>
+    <div class="table-container" id="table-view"></div>
 
     <div class="footer">
       <strong>Research conducted by Upwards GTM Intelligence</strong> | March
@@ -1821,7 +1825,7 @@
       });
 
       // State
-      let currentView = "calendar";
+      let currentView = "table";
       let sortCol = "score";
       let sortDir = -1;
 
