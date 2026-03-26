@@ -1,0 +1,2031 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upwards Event Intelligence Calendar 2026-2027</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --navy: #0f172a;
+        --navy-light: #1e293b;
+        --teal: #0d9488;
+        --teal-light: #14b8a6;
+        --teal-bg: #f0fdfa;
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --green: #22c55e;
+        --green-bg: #f0fdf4;
+        --yellow: #eab308;
+        --yellow-bg: #fefce8;
+        --orange: #f97316;
+        --orange-bg: #fff7ed;
+        --red: #ef4444;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        --shadow-md:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius: 8px;
+        --radius-lg: 12px;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: var(--gray-50);
+        color: var(--gray-800);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(
+          135deg,
+          var(--navy) 0%,
+          #162033 50%,
+          var(--navy-light) 100%
+        );
+        color: white;
+        padding: 48px 24px 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      .header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(13, 148, 136, 0.15) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .header::after {
+        content: "";
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(99, 102, 241, 0.1) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .header-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+        background: var(--teal);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 18px;
+        color: white;
+        letter-spacing: -0.5px;
+      }
+      .brand-name {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .header h1 {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+        line-height: 1.2;
+      }
+      .header h1 span {
+        background: linear-gradient(135deg, var(--teal-light), #5eead4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .header-sub {
+        font-size: 17px;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 400;
+      }
+
+      /* Stats Bar */
+      .stats-bar {
+        max-width: 1280px;
+        margin: -24px auto 0;
+        padding: 0 24px;
+        position: relative;
+        z-index: 2;
+      }
+      .stats-inner {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+      .stat-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--gray-200);
+      }
+      .stat-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--navy);
+        letter-spacing: -0.5px;
+      }
+      .stat-label {
+        font-size: 13px;
+        color: var(--gray-500);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+
+      /* Controls */
+      .controls {
+        max-width: 1280px;
+        margin: 24px auto 0;
+        padding: 0 24px;
+      }
+      .controls-inner {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 20px 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-200);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .filter-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--gray-400);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      select,
+      .search-input {
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        padding: 8px 12px;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        background: var(--gray-50);
+        color: var(--gray-700);
+        outline: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        min-width: 160px;
+      }
+      select:focus,
+      .search-input:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+      }
+      .search-input {
+        min-width: 220px;
+      }
+      .view-toggle {
+        margin-left: auto;
+        display: flex;
+        gap: 0;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .view-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border: none;
+        background: var(--white);
+        color: var(--gray-500);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .view-btn.active {
+        background: var(--navy);
+        color: white;
+      }
+      .view-btn:hover:not(.active) {
+        background: var(--gray-100);
+      }
+      .results-count {
+        font-size: 13px;
+        color: var(--gray-500);
+        font-weight: 500;
+        width: 100%;
+        padding-top: 4px;
+        border-top: 1px solid var(--gray-100);
+        margin-top: 4px;
+      }
+
+      /* Calendar View */
+      .calendar-container {
+        max-width: 1280px;
+        margin: 24px auto;
+        padding: 0 24px 48px;
+      }
+      .month-section {
+        margin-bottom: 32px;
+      }
+      .month-header {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .month-count {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-400);
+        background: var(--gray-100);
+        padding: 2px 10px;
+        border-radius: 20px;
+      }
+      .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 16px;
+      }
+      .event-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-200);
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .event-card:hover {
+        box-shadow: var(--shadow-lg);
+        border-color: var(--gray-300);
+        transform: translateY(-1px);
+      }
+      .event-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .event-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        line-height: 1.3;
+        flex: 1;
+      }
+      .icp-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+      .icp-green {
+        background: var(--green-bg);
+        color: #16a34a;
+      }
+      .icp-yellow {
+        background: var(--yellow-bg);
+        color: #ca8a04;
+      }
+      .icp-orange {
+        background: var(--orange-bg);
+        color: #ea580c;
+      }
+      .icp-gray {
+        background: var(--gray-100);
+        color: var(--gray-500);
+      }
+
+      .event-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--gray-600);
+      }
+      .meta-icon {
+        width: 16px;
+        text-align: center;
+        flex-shrink: 0;
+        opacity: 0.6;
+      }
+      .event-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .industry-pill {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .attendance-pill {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: var(--gray-100);
+        color: var(--gray-600);
+      }
+      .event-why {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--gray-100);
+        line-height: 1.5;
+        display: none;
+      }
+      .event-card.expanded .event-why {
+        display: block;
+      }
+      .expand-hint {
+        font-size: 11px;
+        color: var(--gray-400);
+        margin-top: 8px;
+        font-style: italic;
+      }
+      .event-card.expanded .expand-hint {
+        display: none;
+      }
+
+      /* Table View */
+      .table-container {
+        max-width: 1280px;
+        margin: 24px auto;
+        padding: 0 24px 48px;
+        overflow-x: auto;
+      }
+      .events-table {
+        width: 100%;
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--gray-200);
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+      }
+      .events-table thead th {
+        background: var(--gray-50);
+        padding: 12px 16px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-200);
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+      }
+      .events-table thead th:hover {
+        background: var(--gray-100);
+      }
+      .events-table thead th .sort-arrow {
+        margin-left: 4px;
+        opacity: 0.3;
+      }
+      .events-table thead th.sorted .sort-arrow {
+        opacity: 1;
+      }
+      .events-table tbody td {
+        padding: 12px 16px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: top;
+      }
+      .events-table tbody tr:hover {
+        background: var(--gray-50);
+      }
+      .events-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .table-event-name {
+        font-weight: 600;
+        color: var(--navy);
+        min-width: 200px;
+      }
+      .table-icp {
+        font-weight: 800;
+        text-align: center;
+      }
+      .table-industry-pill {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 20px;
+        color: white;
+        white-space: nowrap;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--navy);
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        padding: 32px 24px;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .footer strong {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* No results */
+      .no-results {
+        text-align: center;
+        padding: 80px 24px;
+        color: var(--gray-400);
+      }
+      .no-results-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+      .no-results h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--gray-600);
+        margin-bottom: 8px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 24px;
+        }
+        .stats-inner {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .controls-inner {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .filter-group {
+          width: 100%;
+        }
+        select,
+        .search-input {
+          width: 100%;
+          min-width: unset;
+        }
+        .view-toggle {
+          margin-left: 0;
+          align-self: stretch;
+        }
+        .view-btn {
+          flex: 1;
+          text-align: center;
+        }
+        .events-grid {
+          grid-template-columns: 1fr;
+        }
+        .stat-value {
+          font-size: 22px;
+        }
+      }
+      @media (max-width: 480px) {
+        .stats-inner {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .header {
+          padding: 32px 16px 32px;
+        }
+        .stats-bar,
+        .controls,
+        .calendar-container,
+        .table-container {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .event-card,
+      .events-table tbody tr {
+        animation: fadeIn 0.3s ease both;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-logo">U</div>
+          <div class="brand-name">Upwards</div>
+        </div>
+        <h1>Event Intelligence <span>Calendar 2026-2027</span></h1>
+        <p class="header-sub">372 Events Across 12 Shift-Worker Industries</p>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stats-inner">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total">89</div>
+          <div class="stat-label">Priority Events Tracked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">13</div>
+          <div class="stat-label">Industries + Cross-Industry</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">Apr '26 - Jan '27</div>
+          <div class="stat-label">Date Range Covered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-top">23</div>
+          <div class="stat-label">Score 9-10 Events</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="controls-inner">
+        <div class="filter-group">
+          <span class="filter-label">Industry</span>
+          <select id="filter-industry">
+            <option value="all">All Industries</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">ICP Fit Score</span>
+          <select id="filter-score">
+            <option value="all">All Scores</option>
+            <option value="9">9-10 Only</option>
+            <option value="8">8+</option>
+            <option value="7">7+</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Month</span>
+          <select id="filter-month">
+            <option value="all">All Months</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Search</span>
+          <input
+            type="text"
+            class="search-input"
+            id="filter-search"
+            placeholder="Search events, locations..."
+          />
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="calendar">Calendar</button>
+          <button class="view-btn" data-view="table">Table</button>
+        </div>
+        <div class="results-count" id="results-count"></div>
+      </div>
+    </div>
+
+    <div class="calendar-container" id="calendar-view"></div>
+    <div class="table-container" id="table-view" style="display: none"></div>
+
+    <div class="footer">
+      <strong>Research conducted by Upwards GTM Intelligence</strong> | March
+      2026 | Powered by Claude Code multi-agent orchestration across Exa,
+      Firecrawl, and web search
+    </div>
+
+    <script>
+      const EVENTS = [
+        // Cross-Industry
+        {
+          id: 1,
+          name: "WorldatWork Total Rewards",
+          dates: "Apr 19-22",
+          month: "Apr 2026",
+          location: "San Antonio, TX",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 9,
+          attendance: "2,000-3,000",
+          why: "Your exact buyer title in high concentration. Directors and VPs of Total Rewards and Benefits are the primary attendees.",
+        },
+        {
+          id: 2,
+          name: "BenefitsPRO Broker Expo",
+          dates: "Apr 28-30",
+          month: "Apr 2026",
+          location: "Chicago, IL",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 8,
+          attendance: "700+",
+          why: "Benefits brokers who recommend solutions to employers. High influence channel for Upwards.",
+        },
+        {
+          id: 3,
+          name: "SALGBA National Conference",
+          dates: "May 4-7",
+          month: "May 2026",
+          location: "Providence, RI",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 9,
+          attendance: "400-600",
+          why: "Government benefits buyers for corrections, transit, and other public sector. Direct ICP overlap.",
+        },
+        {
+          id: 4,
+          name: "SHRM Annual Conference",
+          dates: "Jun 16-19",
+          month: "Jun 2026",
+          location: "Orlando, FL",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 7,
+          attendance: "25,000+",
+          why: "Largest HR conference in the world. Broad audience but massive reach potential for brand awareness.",
+        },
+        {
+          id: 5,
+          name: "PSHRA Annual Conference",
+          dates: "Sep 28-30",
+          month: "Sep 2026",
+          location: "Portland, OR",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 9,
+          attendance: "600+",
+          why: "Public sector HR professionals from corrections, transit, and government agencies. Perfect ICP fit.",
+        },
+        {
+          id: 6,
+          name: "HR Technology Conference",
+          dates: "Oct 20-22",
+          month: "Oct 2026",
+          location: "Las Vegas, NV",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 7,
+          attendance: "10,000+",
+          why: "Benefits technology and workforce management buyers actively evaluating new solutions.",
+        },
+        {
+          id: 7,
+          name: "IFEBP Employee Benefits Conference",
+          dates: "Oct 25-28",
+          month: "Oct 2026",
+          location: "New Orleans, LA",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 9,
+          attendance: "5,000+",
+          why: "Premier employee benefits conference with a dedicated public sector track. High buyer density.",
+        },
+        {
+          id: 8,
+          name: "Workhuman Live",
+          dates: "Apr 27-30",
+          month: "Apr 2026",
+          location: "Orlando, FL",
+          industry: "Cross-Industry",
+          color: "#6366f1",
+          score: 7,
+          attendance: "4,000",
+          why: "Employee experience and retention focus. Decision-makers seeking innovative benefits solutions.",
+        },
+
+        // Security Services
+        {
+          id: 9,
+          name: "Nashville Security Summit",
+          dates: "Apr 27-28",
+          month: "Apr 2026",
+          location: "Nashville, TN",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 7,
+          attendance: "125+",
+          why: "Regional ASIS event. Intimate setting allows for meaningful conversations with security company leaders.",
+        },
+        {
+          id: 10,
+          name: "SIA GovSummit",
+          dates: "May 20-21",
+          month: "May 2026",
+          location: "Washington, DC",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 7,
+          attendance: "300-500",
+          why: "Government security contracts with large shift workforces. High relevance for federal/state security employers.",
+        },
+        {
+          id: 11,
+          name: "Security LeadHER",
+          dates: "Jun 15-16",
+          month: "Jun 2026",
+          location: "Minneapolis, MN",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 8,
+          attendance: "300-500",
+          why: "VP and Director-level women leaders in security. High decision-maker density, child care resonates strongly.",
+        },
+        {
+          id: 12,
+          name: "AcceleRISE",
+          dates: "Aug 3-5",
+          month: "Aug 2026",
+          location: "San Diego, CA",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 6,
+          attendance: "200-400",
+          why: "Emerging security leaders. Good for building relationships with future decision-makers.",
+        },
+        {
+          id: 13,
+          name: "GSX (Global Security Exchange)",
+          dates: "Sep 14-16",
+          month: "Sep 2026",
+          location: "Atlanta, GA",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 8,
+          attendance: "14,000+",
+          why: "Every major security company attends. Dedicated workforce development tracks.",
+        },
+        {
+          id: 14,
+          name: "Securing New Ground (SNG)",
+          dates: "Oct 20-21",
+          month: "Oct 2026",
+          location: "New York, NY",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 8,
+          attendance: "500+",
+          why: "C-suite security executives from Allied Universal, Securitas, and other major employers.",
+        },
+        {
+          id: 15,
+          name: "ISC East",
+          dates: "Nov 3-5",
+          month: "Nov 2026",
+          location: "New York, NY",
+          industry: "Security Services",
+          color: "#ef4444",
+          score: 6,
+          attendance: "7,000+",
+          why: "Northeast security industry. Near Securitas HQ. Good for regional relationship building.",
+        },
+
+        // Skilled Trades
+        {
+          id: 16,
+          name: "NECA EMERGE Conference",
+          dates: "Apr 13-15",
+          month: "Apr 2026",
+          location: "TBD",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 6,
+          attendance: "300-500",
+          why: "Emerging electrical contractor leaders looking for innovative workforce solutions.",
+        },
+        {
+          id: 17,
+          name: "ENR Groundbreaking Women in Construction",
+          dates: "Jun 14-16",
+          month: "Jun 2026",
+          location: "San Diego, CA",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 8,
+          attendance: "900",
+          why: "Child care is the #1 cited barrier for women in trades. Perfect message-market fit.",
+        },
+        {
+          id: 18,
+          name: "NAWIC 71st Annual Conference",
+          dates: "Aug 12-15",
+          month: "Aug 2026",
+          location: "Reno, NV",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 8,
+          attendance: "800-1,200",
+          why: "Women in construction. Child care is a core workforce equity issue that strongly resonates.",
+        },
+        {
+          id: 19,
+          name: "NECA Convention",
+          dates: "Oct 4-7",
+          month: "Oct 2026",
+          location: "Las Vegas, NV",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 6,
+          attendance: "5,000-7,000",
+          why: "Electrical contractors with dedicated workforce sessions discussing retention challenges.",
+        },
+        {
+          id: 20,
+          name: "AGC Workforce & HR Conference",
+          dates: "Oct 21-23",
+          month: "Oct 2026",
+          location: "Phoenix, AZ",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 10,
+          attendance: "400-600",
+          why: "Bullseye event. 100% construction HR professionals discussing workforce retention. Perfect ICP.",
+        },
+        {
+          id: 21,
+          name: "SMACNA Convention",
+          dates: "Oct 25-28",
+          month: "Oct 2026",
+          location: "Orlando, FL",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 6,
+          attendance: "200-400",
+          why: "Sheet metal and HVAC contractors. Workforce challenges are a top agenda item.",
+        },
+        {
+          id: 22,
+          name: "PHCC CONNECT",
+          dates: "Oct 19-22",
+          month: "Oct 2026",
+          location: "Milwaukee, WI",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 6,
+          attendance: "500-800",
+          why: "Plumbing and HVAC contractors facing severe workforce shortages.",
+        },
+        {
+          id: 23,
+          name: "Tradeswomen Build Nations",
+          dates: "Oct 2026",
+          month: "Oct 2026",
+          location: "Houston, TX",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 8,
+          attendance: "3,000-4,000",
+          why: "World's largest tradeswomen conference. Child care is consistently the top barrier discussed.",
+        },
+        {
+          id: 24,
+          name: "MSCA Education Conference",
+          dates: "Nov 8-11",
+          month: "Nov 2026",
+          location: "Austin, TX",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 6,
+          attendance: "400-600",
+          why: "Mechanical service contractors looking for workforce retention strategies.",
+        },
+        {
+          id: 25,
+          name: "LEAP HR Manufacturing",
+          dates: "May 19-21",
+          month: "May 2026",
+          location: "Round Rock, TX",
+          industry: "Skilled Trades",
+          color: "#f59e0b",
+          score: 9,
+          attendance: "150-250",
+          why: "Manufacturing HR decision-makers in an intimate setting. High buyer density and engagement.",
+        },
+
+        // Corrections/Detention
+        {
+          id: 26,
+          name: "Texas Jail Association 40th",
+          dates: "May 4-8",
+          month: "May 2026",
+          location: "San Marcos, TX",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 7,
+          attendance: "300-500",
+          why: "Texas county jail administrators dealing with severe staffing shortages.",
+        },
+        {
+          id: 27,
+          name: "AJA Conference & Jail Expo",
+          dates: "May 16-20",
+          month: "May 2026",
+          location: "Milwaukee, WI",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 8,
+          attendance: "1,500+",
+          why: "The only national jail-focused event. Workforce crisis is the #1 topic.",
+        },
+        {
+          id: 28,
+          name: "MASCA 86th Annual",
+          dates: "May 17-20",
+          month: "May 2026",
+          location: "Westbrook, CT",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 7,
+          attendance: "300-500",
+          why: "Mid-Atlantic state corrections agencies. Regional decision-makers for staffing benefits.",
+        },
+        {
+          id: 29,
+          name: "JAILCON Western",
+          dates: "Jun 8-10",
+          month: "Jun 2026",
+          location: "Chandler, AZ",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 7,
+          attendance: "300-500",
+          why: "Smaller, high-touch corrections event. Meaningful conversations with jail administrators.",
+        },
+        {
+          id: 30,
+          name: "NSA Annual Conference",
+          dates: "Jun 8-11",
+          month: "Jun 2026",
+          location: "Omaha, NE",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 7,
+          attendance: "3,000-4,000",
+          why: "Sheriffs operate most local jails. Influence over corrections staffing and benefits.",
+        },
+        {
+          id: 31,
+          name: "ACA Congress of Correction",
+          dates: "Jul 30-Aug 2",
+          month: "Jul 2026",
+          location: "Pittsburgh, PA",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 8,
+          attendance: "4,000-5,000",
+          why: "The largest corrections gathering in North America. Every major agency is represented.",
+        },
+        {
+          id: 32,
+          name: "JAILCON Central",
+          dates: "Aug 18-20",
+          month: "Aug 2026",
+          location: "Overland Park, KS",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 7,
+          attendance: "300-500",
+          why: "Midwest corrections administrators dealing with staffing and retention challenges.",
+        },
+        {
+          id: 33,
+          name: "JAILCON Southern",
+          dates: "Oct 13-15",
+          month: "Oct 2026",
+          location: "Chattanooga, TN",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 7,
+          attendance: "300-500",
+          why: "Southern corrections market. High turnover region where benefits differentiation matters.",
+        },
+        {
+          id: 34,
+          name: "NCCHC National Conference",
+          dates: "Oct 26-28",
+          month: "Oct 2026",
+          location: "Las Vegas, NV",
+          industry: "Corrections/Detention",
+          color: "#8b5cf6",
+          score: 6,
+          attendance: "1,500-2,000",
+          why: "Correctional healthcare administrators. Adjacent to HR; healthcare staff face same shift challenges.",
+        },
+
+        // Fire/EMS/Paramedics
+        {
+          id: 35,
+          name: "Texas Fire Chiefs",
+          dates: "Apr 13-16",
+          month: "Apr 2026",
+          location: "Waco, TX",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 7,
+          attendance: "400-600",
+          why: "Texas fire chiefs making benefits decisions for their departments.",
+        },
+        {
+          id: 36,
+          name: "FDIC International",
+          dates: "Apr 20-25",
+          month: "Apr 2026",
+          location: "Indianapolis, IN",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 6,
+          attendance: "35,000+",
+          why: "Massive fire industry event. Great for brand awareness across the entire fire service.",
+        },
+        {
+          id: 37,
+          name: "IAFC Fire-Rescue Med",
+          dates: "May 19-21",
+          month: "May 2026",
+          location: "Glendale, AZ",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 7,
+          attendance: "500-1,000",
+          why: "Fire-based EMS leaders focused on workforce health and retention.",
+        },
+        {
+          id: 38,
+          name: "Mental Wellness Symposium",
+          dates: "May 31-Jun 3",
+          month: "May 2026",
+          location: "Iowa City, IA",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 9,
+          attendance: "300-500",
+          why: "Family conflict is a top driver of first responder attrition. Child care is core to the solution.",
+        },
+        {
+          id: 39,
+          name: "Metro Fire Chiefs Conference",
+          dates: "Jun 7-11",
+          month: "Jun 2026",
+          location: "Milwaukee, WI",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 9,
+          attendance: "200-400",
+          why: "Big-city fire chiefs only. Every attendee is a decision-maker for their department.",
+        },
+        {
+          id: 40,
+          name: "Pinnacle EMS Leadership Forum",
+          dates: "Jul 13-16",
+          month: "Jul 2026",
+          location: "San Diego, CA",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 10,
+          attendance: "300-500",
+          why: "Executive-only EMS event. Highest concentration of decision-makers in the EMS space.",
+        },
+        {
+          id: 41,
+          name: "IAFF 58th Convention",
+          dates: "Aug 9-14",
+          month: "Aug 2026",
+          location: "Arlington, TX",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 7,
+          attendance: "3,000-5,000",
+          why: "Union leaders who influence benefits negotiations for firefighter contracts.",
+        },
+        {
+          id: 42,
+          name: "IAFC Fire-Rescue International",
+          dates: "Aug 12-14",
+          month: "Aug 2026",
+          location: "Kansas City, MO",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 8,
+          attendance: "10,000-15,000",
+          why: "THE fire chiefs conference. Every major metro and county fire department is represented.",
+        },
+        {
+          id: 43,
+          name: "EMS World Expo",
+          dates: "Sep 28-Oct 2",
+          month: "Sep 2026",
+          location: "Orlando, FL",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 7,
+          attendance: "5,000-7,000",
+          why: "Premier national EMS conference. Workforce retention is a growing agenda focus.",
+        },
+        {
+          id: 44,
+          name: "Firefighter Health & Wellness",
+          dates: "Oct 14-16",
+          month: "Oct 2026",
+          location: "Fairborn, OH",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 8,
+          attendance: "200-400",
+          why: "Family wellness focus. Spouse-friendly programming. Child care directly addresses family conflict.",
+        },
+        {
+          id: 45,
+          name: "IAFC/VCOS Symposium in Sun",
+          dates: "Nov 12-15",
+          month: "Nov 2026",
+          location: "Clearwater, FL",
+          industry: "Fire/EMS/Paramedics",
+          color: "#dc2626",
+          score: 8,
+          attendance: "500-800",
+          why: "Retention is THE topic at this event. Chiefs are actively seeking new benefits to reduce turnover.",
+        },
+
+        // Casino & Gaming
+        {
+          id: 46,
+          name: "Indian Gaming Tradeshow",
+          dates: "Mar 30-Apr 2",
+          month: "Apr 2026",
+          location: "San Diego, CA",
+          industry: "Casino & Gaming",
+          color: "#ec4899",
+          score: 8,
+          attendance: "8,000+",
+          why: "Has workforce and benefits session on the agenda. Tribal gaming employs large 24/7 shift workforces.",
+        },
+        {
+          id: 47,
+          name: "East Coast Gaming Congress",
+          dates: "Apr 14-15",
+          month: "Apr 2026",
+          location: "Atlantic City, NJ",
+          industry: "Casino & Gaming",
+          color: "#ec4899",
+          score: 6,
+          attendance: "500-800",
+          why: "Northeast casino leadership. Good for regional relationship building in the gaming sector.",
+        },
+        {
+          id: 48,
+          name: "National HR in Hospitality",
+          dates: "Apr 30-May 1",
+          month: "Apr 2026",
+          location: "Hollywood, FL",
+          industry: "Casino & Gaming",
+          color: "#ec4899",
+          score: 9,
+          attendance: "400-600",
+          why: "Casino-resort HR leaders. Cornell University event with high-quality, senior attendees.",
+        },
+        {
+          id: 49,
+          name: "OIGA Conference",
+          dates: "Jul 20-22",
+          month: "Jul 2026",
+          location: "Oklahoma City, OK",
+          industry: "Casino & Gaming",
+          color: "#ec4899",
+          score: 7,
+          attendance: "3,000",
+          why: "Oklahoma tribal gaming market. Large regional employer base with significant shift workforces.",
+        },
+        {
+          id: 50,
+          name: "NNAHRA 30th Annual",
+          dates: "Sep 28-30",
+          month: "Sep 2026",
+          location: "Honolulu, HI",
+          industry: "Casino & Gaming",
+          color: "#ec4899",
+          score: 9,
+          attendance: "300-500",
+          why: "Tribal HR professionals. Direct benefits buyers for Native American gaming operations.",
+        },
+        {
+          id: 51,
+          name: "G2E (Global Gaming Expo)",
+          dates: "Sep 28-Oct 1",
+          month: "Sep 2026",
+          location: "Las Vegas, NV",
+          industry: "Casino & Gaming",
+          color: "#ec4899",
+          score: 6,
+          attendance: "25,000+",
+          why: "Massive gaming expo. Every major casino operator is present. Good for broad awareness.",
+        },
+
+        // Food Processing
+        {
+          id: 52,
+          name: "USPOULTRY Workforce Conference",
+          dates: "Apr 15-17",
+          month: "Apr 2026",
+          location: "Destin, FL",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 10,
+          attendance: "200-400",
+          why: "Bullseye event. Poultry HR leaders from Tyson, JBS, and all major processors attend.",
+        },
+        {
+          id: 53,
+          name: "Meat Institute ELS+",
+          dates: "Apr 20-22",
+          month: "Apr 2026",
+          location: "Houston, TX",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 9,
+          attendance: "300-500",
+          why: "HR, labor, and safety leaders from every major meatpacker. High decision-maker density.",
+        },
+        {
+          id: 54,
+          name: "Poultry Federation All Member",
+          dates: "Apr 23",
+          month: "Apr 2026",
+          location: "Rogers, AR",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 7,
+          attendance: "100-200",
+          why: "Tyson's backyard. Intimate gathering with NW Arkansas poultry industry leaders.",
+        },
+        {
+          id: 55,
+          name: "66th Annual Poultry Festival",
+          dates: "Jun 12-13",
+          month: "Jun 2026",
+          location: "Rogers, AR",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 6,
+          attendance: "500-1,000",
+          why: "NW Arkansas industry celebration. Good for relationship building in Tyson territory.",
+        },
+        {
+          id: 56,
+          name: "AAMP Convention",
+          dates: "Jul 9-11",
+          month: "Jul 2026",
+          location: "Milwaukee, WI",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 6,
+          attendance: "1,000-1,500",
+          why: "Mid-size meat processors. Companies in the 200-2000 employee sweet spot.",
+        },
+        {
+          id: 57,
+          name: "Chicken Marketing Summit",
+          dates: "Jul 27-29",
+          month: "Jul 2026",
+          location: "Palm Harbor, FL",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 6,
+          attendance: "200-300",
+          why: "Senior poultry industry leaders. Intimate networking with C-suite executives.",
+        },
+        {
+          id: 58,
+          name: "Arkansas SHRM Conference",
+          dates: "Oct 14-16",
+          month: "Oct 2026",
+          location: "Hot Springs, AR",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 8,
+          attendance: "500-800",
+          why: "Tyson, Simmons, George's HR leaders all attend this regional SHRM event.",
+        },
+        {
+          id: 59,
+          name: "Iowa SHRM Conference",
+          dates: "Oct 7-9",
+          month: "Oct 2026",
+          location: "Coralville, IA",
+          industry: "Food Processing",
+          color: "#84cc16",
+          score: 8,
+          attendance: "400-600",
+          why: "JBS, Tyson, Smithfield plant HR leaders attend. Key meatpacking geography.",
+        },
+
+        // Waste Management
+        {
+          id: 60,
+          name: "TxSWANA Annual",
+          dates: "Apr 26-29",
+          month: "Apr 2026",
+          location: "El Paso, TX",
+          industry: "Waste Management",
+          color: "#78716c",
+          score: 6,
+          attendance: "300-500",
+          why: "Texas waste management professionals dealing with shift workforce challenges.",
+        },
+        {
+          id: 61,
+          name: "Waste Leadership Summit",
+          dates: "Jun 8-10",
+          month: "Jun 2026",
+          location: "Washington, DC",
+          industry: "Waste Management",
+          color: "#78716c",
+          score: 8,
+          attendance: "1,000-2,000",
+          why: "Senior executives only. Workforce development is a dedicated agenda track.",
+        },
+        {
+          id: 62,
+          name: "SWANA RCon",
+          dates: "Sep 29-Oct 2",
+          month: "Sep 2026",
+          location: "St. Louis, MO",
+          industry: "Waste Management",
+          color: "#78716c",
+          score: 7,
+          attendance: "4,000-5,000",
+          why: "Major waste industry conference. Key employers like Waste Management and Republic attend.",
+        },
+        {
+          id: 63,
+          name: "NWRA Industry Conference 2027",
+          dates: "Jan 18-20",
+          month: "Jan 2027",
+          location: "Nashville, TN",
+          industry: "Waste Management",
+          color: "#78716c",
+          score: 8,
+          attendance: "500-800",
+          why: "Executive-heavy gathering. All major haulers represented in an intimate setting.",
+        },
+
+        // School Bus
+        {
+          id: 64,
+          name: "APTA Workforce Summit",
+          dates: "May 20-21",
+          month: "May 2026",
+          location: "Salt Lake City, UT",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 10,
+          attendance: "300-500",
+          why: "100% workforce focus for transit and transportation. Perfect alignment with Upwards value prop.",
+        },
+        {
+          id: 65,
+          name: "FAPT Florida",
+          dates: "Jun 7",
+          month: "Jun 2026",
+          location: "Orlando, FL",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 7,
+          attendance: "400-700",
+          why: "Florida pupil transportation leaders managing large driver pools.",
+        },
+        {
+          id: 66,
+          name: "GAPT Georgia",
+          dates: "Jun 14-18",
+          month: "Jun 2026",
+          location: "Jekyll Island, GA",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 7,
+          attendance: "400-600",
+          why: "Southeast pupil transportation. Growing market for driver retention solutions.",
+        },
+        {
+          id: 67,
+          name: "TAPT Texas",
+          dates: "Jun 26-30",
+          month: "Jun 2026",
+          location: "The Woodlands, TX",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 7,
+          attendance: "1,500-2,000",
+          why: "Largest state school bus conference. Texas is a critical market.",
+        },
+        {
+          id: 68,
+          name: "STN EXPO West",
+          dates: "Jul 9-15",
+          month: "Jul 2026",
+          location: "Reno, NV",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 8,
+          attendance: "1,500-2,000",
+          why: "Major national school bus event with workforce sessions and vendor expo.",
+        },
+        {
+          id: 69,
+          name: "NSTA Annual Meeting",
+          dates: "Jul 19-22",
+          month: "Jul 2026",
+          location: "Denver, CO",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 9,
+          attendance: "500-800",
+          why: "Private school bus contractors. Direct employers who control benefits decisions.",
+        },
+        {
+          id: 70,
+          name: "NAPT ACTS 2026",
+          dates: "Oct 3-7",
+          month: "Oct 2026",
+          location: "Louisville, KY",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 9,
+          attendance: "2,000-3,000",
+          why: "Premier school transportation conference. Driver shortage is the #1 topic every year.",
+        },
+        {
+          id: 71,
+          name: "TSD Conference",
+          dates: "Nov 4-10",
+          month: "Nov 2026",
+          location: "Frisco/Dallas, TX",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 8,
+          attendance: "800-1,200",
+          why: "Special needs transportation. Hardest roles to fill; benefits are a key retention lever.",
+        },
+        {
+          id: 72,
+          name: "NASDPTS Annual",
+          dates: "Nov 14-17",
+          month: "Nov 2026",
+          location: "Arlington, VA",
+          industry: "School Bus",
+          color: "#06b6d4",
+          score: 8,
+          attendance: "200-400",
+          why: "State directors of pupil transportation. Policy-level influence on benefits requirements.",
+        },
+
+        // Airport Ground
+        {
+          id: 73,
+          name: "AAAE Annual Conference",
+          dates: "May 3-5",
+          month: "May 2026",
+          location: "Los Angeles, CA",
+          industry: "Airport Ground",
+          color: "#0ea5e9",
+          score: 7,
+          attendance: "2,500+",
+          why: "Largest airport executive gathering. Ground operations workforce is a growing concern.",
+        },
+        {
+          id: 74,
+          name: "ACI-NA Business of Airports",
+          dates: "Jun 22-24",
+          month: "Jun 2026",
+          location: "Salt Lake City, UT",
+          industry: "Airport Ground",
+          color: "#0ea5e9",
+          score: 9,
+          attendance: "300-500",
+          why: "Workforce planning track with direct fit for ground operations staffing challenges.",
+        },
+        {
+          id: 75,
+          name: "ACI-NA Annual Conference",
+          dates: "Sep 14-17",
+          month: "Sep 2026",
+          location: "Philadelphia, PA",
+          industry: "Airport Ground",
+          color: "#0ea5e9",
+          score: 7,
+          attendance: "2,000+",
+          why: "HR Committee workshop. Airport authorities managing large shift-based workforces.",
+        },
+
+        // Transit
+        {
+          id: 76,
+          name: "APTA Legislative Conference",
+          dates: "Apr 12-14",
+          month: "Apr 2026",
+          location: "Washington, DC",
+          industry: "Transit",
+          color: "#14b8a6",
+          score: 6,
+          attendance: "500-800",
+          why: "Transit CEOs and board members. Good for executive-level awareness building.",
+        },
+        {
+          id: 77,
+          name: "WTS International Annual",
+          dates: "May 5-7",
+          month: "May 2026",
+          location: "Los Angeles, CA",
+          industry: "Transit",
+          color: "#14b8a6",
+          score: 8,
+          attendance: "1,000-1,500",
+          why: "Women in transportation. Workforce equity track where child care is a central theme.",
+        },
+        {
+          id: 78,
+          name: "APTA Mobility Conference",
+          dates: "May 17-20",
+          month: "May 2026",
+          location: "Salt Lake City, UT",
+          industry: "Transit",
+          color: "#14b8a6",
+          score: 7,
+          attendance: "800",
+          why: "Bus and paratransit system managers dealing with driver recruitment and retention.",
+        },
+        {
+          id: 79,
+          name: "COMTO National Meeting",
+          dates: "Jul 25-28",
+          month: "Jul 2026",
+          location: "Washington, DC",
+          industry: "Transit",
+          color: "#14b8a6",
+          score: 8,
+          attendance: "500-800",
+          why: "Minority transit officials with equity focus. Child care access is a workforce equity issue.",
+        },
+        {
+          id: 80,
+          name: "APTA TRANSform & EXPO",
+          dates: "Oct 4-7",
+          month: "Oct 2026",
+          location: "Chicago, IL",
+          industry: "Transit",
+          color: "#14b8a6",
+          score: 7,
+          attendance: "12,000+",
+          why: "World's largest transit showcase. Every transit agency in North America is represented.",
+        },
+
+        // Janitorial/Cleaning
+        {
+          id: 81,
+          name: "BSCAI Executive Management",
+          dates: "May 13-15",
+          month: "May 2026",
+          location: "Clearwater Beach, FL",
+          industry: "Janitorial/Cleaning",
+          color: "#a855f7",
+          score: 9,
+          attendance: "200-300",
+          why: "Building service contractor owners discussing workforce strategy. Perfect audience.",
+        },
+        {
+          id: 82,
+          name: "BOMA International",
+          dates: "Jun 27-30",
+          month: "Jun 2026",
+          location: "Long Beach, CA",
+          industry: "Janitorial/Cleaning",
+          color: "#a855f7",
+          score: 5,
+          attendance: "3,000-4,000",
+          why: "Building owners and managers. Indirect channel but can drive referrals to cleaning contractors.",
+        },
+        {
+          id: 83,
+          name: "ISSA Show + BSCAI CS26",
+          dates: "Nov 16-19",
+          month: "Nov 2026",
+          location: "Las Vegas, NV",
+          industry: "Janitorial/Cleaning",
+          color: "#a855f7",
+          score: 8,
+          attendance: "14,000-16,000",
+          why: "Flagship cleaning industry event. ABM, Marsden, and all major BSCs exhibit here.",
+        },
+        {
+          id: 84,
+          name: "IFMA World Workplace",
+          dates: "Nov 18-20",
+          month: "Nov 2026",
+          location: "Anaheim, CA",
+          industry: "Janitorial/Cleaning",
+          color: "#a855f7",
+          score: 6,
+          attendance: "4,000-5,000",
+          why: "Facility management conference. ABM is a member. Adjacent to cleaning workforce decisions.",
+        },
+
+        // Landscaping
+        {
+          id: 85,
+          name: "Lawn & Landscape Business Builders",
+          dates: "May 20-21",
+          month: "May 2026",
+          location: "Nashville, TN",
+          industry: "Landscaping",
+          color: "#22c55e",
+          score: 7,
+          attendance: "200-400",
+          why: "Landscape business growth conference. Workforce is always a top challenge discussed.",
+        },
+        {
+          id: 86,
+          name: "Equip Exposition",
+          dates: "Oct 20-23",
+          month: "Oct 2026",
+          location: "Louisville, KY",
+          industry: "Landscaping",
+          color: "#22c55e",
+          score: 6,
+          attendance: "28,000+",
+          why: "Massive outdoor trade show. Every landscaper and tree care company attends.",
+        },
+        {
+          id: 87,
+          name: "NALP ELEVATE",
+          dates: "Nov 8-11",
+          month: "Nov 2026",
+          location: "Tampa, FL",
+          industry: "Landscaping",
+          color: "#22c55e",
+          score: 8,
+          attendance: "2,000-2,500",
+          why: "Flagship landscape industry event. Leadership teams send their HR and ops decision-makers.",
+        },
+        {
+          id: 88,
+          name: "TCI EXPO",
+          dates: "Nov 12-14",
+          month: "Nov 2026",
+          location: "Ft. Lauderdale, FL",
+          industry: "Landscaping",
+          color: "#22c55e",
+          score: 7,
+          attendance: "2,500-3,000",
+          why: "Tree care industry. Davey Tree, SavATree, and other major employers present.",
+        },
+        {
+          id: 89,
+          name: "Irrigation Show",
+          dates: "Dec 7-10",
+          month: "Dec 2026",
+          location: "Las Vegas, NV",
+          industry: "Landscaping",
+          color: "#22c55e",
+          score: 5,
+          attendance: "5,000+",
+          why: "Irrigation and landscape industry. Niche but includes some relevant employers.",
+        },
+      ];
+
+      // Month ordering
+      const MONTH_ORDER = [
+        "Apr 2026",
+        "May 2026",
+        "Jun 2026",
+        "Jul 2026",
+        "Aug 2026",
+        "Sep 2026",
+        "Oct 2026",
+        "Nov 2026",
+        "Dec 2026",
+        "Jan 2027",
+      ];
+
+      // Get unique industries
+      const industries = [...new Set(EVENTS.map((e) => e.industry))].sort();
+
+      // Populate industry filter
+      const industrySelect = document.getElementById("filter-industry");
+      industries.forEach((ind) => {
+        const opt = document.createElement("option");
+        opt.value = ind;
+        opt.textContent = ind;
+        industrySelect.appendChild(opt);
+      });
+
+      // Populate month filter
+      const monthSelect = document.getElementById("filter-month");
+      MONTH_ORDER.forEach((m) => {
+        if (EVENTS.some((e) => e.month === m)) {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          monthSelect.appendChild(opt);
+        }
+      });
+
+      // State
+      let currentView = "calendar";
+      let sortCol = "score";
+      let sortDir = -1;
+
+      function getFiltered() {
+        const ind = document.getElementById("filter-industry").value;
+        const sc = document.getElementById("filter-score").value;
+        const mo = document.getElementById("filter-month").value;
+        const q = document
+          .getElementById("filter-search")
+          .value.toLowerCase()
+          .trim();
+
+        return EVENTS.filter((e) => {
+          if (ind !== "all" && e.industry !== ind) return false;
+          if (sc !== "all" && e.score < parseInt(sc)) return false;
+          if (mo !== "all" && e.month !== mo) return false;
+          if (
+            q &&
+            !(
+              e.name.toLowerCase().includes(q) ||
+              e.location.toLowerCase().includes(q) ||
+              e.industry.toLowerCase().includes(q) ||
+              e.why.toLowerCase().includes(q) ||
+              e.dates.toLowerCase().includes(q)
+            )
+          )
+            return false;
+          return true;
+        });
+      }
+
+      function icpClass(score) {
+        if (score >= 9) return "icp-green";
+        if (score >= 7) return "icp-yellow";
+        if (score >= 5) return "icp-orange";
+        return "icp-gray";
+      }
+
+      function renderCalendar(events) {
+        const container = document.getElementById("calendar-view");
+        if (events.length === 0) {
+          container.innerHTML = `<div class="no-results"><div class="no-results-icon">&#x1F50D;</div><h3>No events match your filters</h3><p>Try adjusting your search criteria</p></div>`;
+          return;
+        }
+
+        // Group by month
+        const grouped = {};
+        MONTH_ORDER.forEach((m) => {
+          grouped[m] = [];
+        });
+        events.forEach((e) => {
+          if (!grouped[e.month]) grouped[e.month] = [];
+          grouped[e.month].push(e);
+        });
+
+        let html = "";
+        MONTH_ORDER.forEach((m) => {
+          const monthEvents = grouped[m];
+          if (!monthEvents || monthEvents.length === 0) return;
+          monthEvents.sort((a, b) => b.score - a.score);
+
+          html += `<div class="month-section">
+      <div class="month-header">${m} <span class="month-count">${monthEvents.length} event${monthEvents.length !== 1 ? "s" : ""}</span></div>
+      <div class="events-grid">`;
+
+          monthEvents.forEach((e) => {
+            html += `<div class="event-card" onclick="this.classList.toggle('expanded')">
+        <div class="event-card-top">
+          <div class="event-name">${e.name}</div>
+          <div class="icp-badge ${icpClass(e.score)}">${e.score}</div>
+        </div>
+        <div class="event-meta">
+          <div class="meta-row"><span class="meta-icon">&#128197;</span> ${e.dates}</div>
+          <div class="meta-row"><span class="meta-icon">&#128205;</span> ${e.location}</div>
+          <div class="meta-row"><span class="meta-icon">&#128101;</span> ${e.attendance} expected</div>
+        </div>
+        <div class="event-tags">
+          <span class="industry-pill" style="background:${e.color}">${e.industry}</span>
+        </div>
+        <div class="expand-hint">Click to see why this event matters</div>
+        <div class="event-why">${e.why}</div>
+      </div>`;
+          });
+
+          html += `</div></div>`;
+        });
+
+        container.innerHTML = html;
+      }
+
+      function renderTable(events) {
+        const container = document.getElementById("table-view");
+        if (events.length === 0) {
+          container.innerHTML = `<div class="no-results"><div class="no-results-icon">&#x1F50D;</div><h3>No events match your filters</h3><p>Try adjusting your search criteria</p></div>`;
+          return;
+        }
+
+        // Sort
+        const sorted = [...events].sort((a, b) => {
+          let av = a[sortCol],
+            bv = b[sortCol];
+          if (typeof av === "string") av = av.toLowerCase();
+          if (typeof bv === "string") bv = bv.toLowerCase();
+          if (av < bv) return -1 * sortDir;
+          if (av > bv) return 1 * sortDir;
+          return 0;
+        });
+
+        const cols = [
+          { key: "name", label: "Event" },
+          { key: "dates", label: "Dates" },
+          { key: "location", label: "Location" },
+          { key: "industry", label: "Industry" },
+          { key: "score", label: "ICP Score" },
+          { key: "attendance", label: "Attendance" },
+        ];
+
+        let html = `<table class="events-table"><thead><tr>`;
+        cols.forEach((c) => {
+          const arrow =
+            sortCol === c.key
+              ? sortDir === 1
+                ? "&#9650;"
+                : "&#9660;"
+              : "&#9650;";
+          const cls = sortCol === c.key ? " sorted" : "";
+          html += `<th class="${cls}" onclick="sortTable('${c.key}')">${c.label} <span class="sort-arrow">${arrow}</span></th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        sorted.forEach((e, i) => {
+          html += `<tr style="animation-delay:${Math.min(i * 20, 500)}ms">
+      <td class="table-event-name">${e.name}</td>
+      <td>${e.dates}</td>
+      <td>${e.location}</td>
+      <td><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span></td>
+      <td class="table-icp ${icpClass(e.score)}" style="background:none">${e.score}</td>
+      <td>${e.attendance}</td>
+    </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+      }
+
+      function sortTable(col) {
+        if (sortCol === col) {
+          sortDir *= -1;
+        } else {
+          sortCol = col;
+          sortDir = col === "score" ? -1 : 1;
+        }
+        render();
+      }
+      window.sortTable = sortTable;
+
+      function render() {
+        const filtered = getFiltered();
+        document.getElementById("results-count").textContent =
+          `Showing ${filtered.length} of ${EVENTS.length} events`;
+
+        if (currentView === "calendar") {
+          renderCalendar(filtered);
+          document.getElementById("calendar-view").style.display = "";
+          document.getElementById("table-view").style.display = "none";
+        } else {
+          renderTable(filtered);
+          document.getElementById("calendar-view").style.display = "none";
+          document.getElementById("table-view").style.display = "";
+        }
+      }
+
+      // Event listeners
+      document
+        .getElementById("filter-industry")
+        .addEventListener("change", render);
+      document
+        .getElementById("filter-score")
+        .addEventListener("change", render);
+      document
+        .getElementById("filter-month")
+        .addEventListener("change", render);
+      document
+        .getElementById("filter-search")
+        .addEventListener("input", render);
+
+      document.querySelectorAll(".view-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".view-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentView = btn.dataset.view;
+          render();
+        });
+      });
+
+      // Initial render
+      render();
+
+      // Update top events stat
+      document.getElementById("stat-top").textContent = EVENTS.filter(
+        (e) => e.score >= 9,
+      ).length;
+    </script>
+  </body>
+</html>
