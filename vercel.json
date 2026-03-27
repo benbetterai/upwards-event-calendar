@@ -1,0 +1,8 @@
+{
+  "public": true,
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
+}
