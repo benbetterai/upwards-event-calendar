@@ -1318,6 +1318,227 @@
       .rgi-value.unfavorable {
         color: #dc2626;
       }
+
+      /* ROI View (dedicated tab) */
+      .roi-view-container {
+        max-width: 1400px;
+        margin: 24px auto;
+        padding: 0 24px 48px;
+      }
+      .roi-global-params {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-sm);
+      }
+      .roi-global-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 4px;
+      }
+      .roi-global-subtitle {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin-bottom: 20px;
+      }
+      .roi-params-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .roi-summary-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .roi-stat-card {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+      }
+      .roi-stat-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .roi-stat-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--gray-500);
+        margin-top: 4px;
+      }
+      .roi-table-wrap {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        overflow-x: auto;
+        box-shadow: var(--shadow-sm);
+      }
+      .roi-go-row {
+        background: #f0fdf4;
+      }
+      .roi-nogo-row {
+        background: #fef2f2;
+      }
+      .roi-go-row:hover {
+        background: #dcfce7 !important;
+      }
+      .roi-nogo-row:hover {
+        background: #fee2e2 !important;
+      }
+      .override-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+        border: 1px solid var(--teal);
+        color: var(--teal);
+        background: transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-family: "Inter", sans-serif;
+      }
+      .override-btn:hover {
+        background: var(--teal-bg);
+      }
+      .override-btn.has-override {
+        background: var(--teal);
+        color: white;
+      }
+      .override-panel {
+        background: var(--gray-50);
+        padding: 16px 16px 16px 48px;
+        border-top: 1px solid var(--gray-200);
+      }
+      .override-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .override-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .override-save-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 16px;
+        background: var(--teal);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .override-save-btn:hover {
+        background: var(--teal-light);
+      }
+      .override-reset-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 16px;
+        background: var(--white);
+        color: var(--gray-600);
+        border: 1px solid var(--gray-300);
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .override-reset-btn:hover {
+        background: var(--gray-100);
+      }
+      .customized-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--teal);
+        margin-left: 6px;
+        vertical-align: middle;
+      }
+      .modal-customize-toggle {
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--teal);
+        background: none;
+        border: 1px solid var(--teal);
+        border-radius: var(--radius);
+        padding: 6px 14px;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: all 0.15s;
+      }
+      .modal-customize-toggle:hover {
+        background: var(--teal-bg);
+      }
+      .modal-customize-toggle.active {
+        background: var(--teal);
+        color: white;
+      }
+      .modal-override-panel {
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-top: 12px;
+      }
+      .modal-override-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .modal-override-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--teal);
+        background: var(--teal-bg);
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-left: 8px;
+      }
+
+      @media (max-width: 768px) {
+        .roi-summary-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .roi-params-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .override-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 480px) {
+        .roi-summary-stats {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .roi-params-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .override-grid {
+          grid-template-columns: 1fr;
+        }
+        .roi-view-container {
+          padding: 0 12px 48px;
+        }
+        .modal-override-grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1350,122 +1571,6 @@
           <div class="stat-value" id="stat-top">23</div>
           <div class="stat-label">Score 9-10 Events</div>
         </div>
-      </div>
-    </div>
-
-    <div class="roi-settings-wrap">
-      <button
-        class="roi-toggle-btn"
-        id="roi-toggle"
-        onclick="
-          document.getElementById('roi-panel').classList.toggle('open');
-          this.classList.toggle('active');
-        "
-      >
-        ROI Calculator &#9881;
-      </button>
-      <div class="roi-settings-panel" id="roi-panel">
-        <div class="roi-settings-grid">
-          <div class="roi-field">
-            <label>Event Sponsorship Cost</label
-            ><input
-              type="number"
-              id="roi-sponsorship"
-              value="5000"
-              min="0"
-              step="500"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Number of Reps</label
-            ><input type="number" id="roi-reps" value="2" min="1" step="1" />
-          </div>
-          <div class="roi-field">
-            <label>Travel Cost per Rep</label
-            ><input
-              type="number"
-              id="roi-travel"
-              value="1200"
-              min="0"
-              step="100"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Attendee Show Rate (%)</label
-            ><input
-              type="number"
-              id="roi-showrate"
-              value="90"
-              min="0"
-              max="100"
-              step="1"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Convo &rarr; Meeting Rate (%)</label
-            ><input
-              type="number"
-              id="roi-convorate"
-              value="25"
-              min="0"
-              max="100"
-              step="1"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Meeting Show Rate (%)</label
-            ><input
-              type="number"
-              id="roi-meetingshow"
-              value="70"
-              min="0"
-              max="100"
-              step="1"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Close Rate (%)</label
-            ><input
-              type="number"
-              id="roi-closerate"
-              value="5.7"
-              min="0"
-              max="100"
-              step="0.1"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Median Contract Value</label
-            ><input
-              type="number"
-              id="roi-contract"
-              value="18000"
-              min="0"
-              step="1000"
-            />
-          </div>
-          <div class="roi-field">
-            <label>Convos per Rep per Day</label
-            ><input type="number" id="roi-convos" value="25" min="1" step="1" />
-          </div>
-          <div class="roi-field">
-            <label>Event Days</label
-            ><input type="number" id="roi-days" value="2" min="1" step="1" />
-          </div>
-          <div class="roi-field">
-            <label>Expected Value per Meeting</label
-            ><input
-              type="number"
-              id="roi-meetingvalue"
-              value="700"
-              min="0"
-              step="50"
-            />
-          </div>
-        </div>
-        <button class="roi-recalc-btn" onclick="recalculateROI()">
-          Recalculate
-        </button>
       </div>
     </div>
 
@@ -1513,6 +1618,7 @@
           <button class="view-btn" data-view="calendar">Calendar</button>
           <button class="view-btn" data-view="map">Map</button>
           <button class="view-btn active" data-view="table">Table</button>
+          <button class="view-btn" data-view="roi">ROI Calculator</button>
         </div>
         <div class="results-count" id="results-count"></div>
         <button
@@ -1547,6 +1653,7 @@
       <div class="map-panel" id="map-panel"></div>
     </div>
     <div class="table-container" id="table-view"></div>
+    <div class="roi-view-container" id="roi-view" style="display: none"></div>
 
     <div class="footer">
       <strong>Research conducted by Upwards GTM Intelligence</strong> | March
@@ -2996,11 +3103,45 @@
         }
       });
 
-      // ROI Calculator
+      // ROI Calculator - Global params and per-event overrides
+      const globalParams = {
+        sponsorshipCost: 5000,
+        numReps: 2,
+        travelCostPerRep: 1200,
+        attendeeShowRate: 90,
+        convoToMeetingRate: 25,
+        meetingShowRate: 70,
+        closeRate: 5.7,
+        medianContractValue: 18000,
+        convosPerRepPerDay: 25,
+        eventDays: 2,
+        expectedValuePerMeeting: 700,
+      };
+
+      // Per-event overrides persisted in localStorage
+      let eventOverrides = JSON.parse(
+        localStorage.getItem("eventOverrides") || "{}",
+      );
+
+      function saveOverrides() {
+        localStorage.setItem("eventOverrides", JSON.stringify(eventOverrides));
+      }
+
+      function getEventParams(eventId) {
+        const overrides = eventOverrides[eventId] || {};
+        return { ...globalParams, ...overrides };
+      }
+
+      function hasOverrides(eventId) {
+        return (
+          eventOverrides[eventId] &&
+          Object.keys(eventOverrides[eventId]).length > 0
+        );
+      }
+
       function parseAttendees(att) {
         if (!att) return 0;
         let s = String(att).replace(/,/g, "").replace(/\+/g, "").trim();
-        // For ranges like "2000-3000", use lower bound
         if (s.includes("-")) {
           s = s.split("-")[0].trim();
         }
@@ -3009,30 +3150,34 @@
 
       function getROIParams() {
         return {
-          sponsorshipCost:
-            parseFloat(document.getElementById("roi-sponsorship").value) || 0,
-          numReps: parseInt(document.getElementById("roi-reps").value) || 1,
-          travelCostPerRep:
-            parseFloat(document.getElementById("roi-travel").value) || 0,
-          attendeeShowRate:
-            (parseFloat(document.getElementById("roi-showrate").value) || 0) /
-            100,
-          convoToMeetingRate:
-            (parseFloat(document.getElementById("roi-convorate").value) || 0) /
-            100,
-          meetingShowRate:
-            (parseFloat(document.getElementById("roi-meetingshow").value) ||
-              0) / 100,
-          closeRate:
-            (parseFloat(document.getElementById("roi-closerate").value) || 0) /
-            100,
-          medianContractValue:
-            parseFloat(document.getElementById("roi-contract").value) || 0,
-          convosPerRepPerDay:
-            parseInt(document.getElementById("roi-convos").value) || 1,
-          eventDays: parseInt(document.getElementById("roi-days").value) || 1,
-          expectedValuePerMeeting:
-            parseFloat(document.getElementById("roi-meetingvalue").value) || 1,
+          sponsorshipCost: globalParams.sponsorshipCost,
+          numReps: globalParams.numReps,
+          travelCostPerRep: globalParams.travelCostPerRep,
+          attendeeShowRate: globalParams.attendeeShowRate / 100,
+          convoToMeetingRate: globalParams.convoToMeetingRate / 100,
+          meetingShowRate: globalParams.meetingShowRate / 100,
+          closeRate: globalParams.closeRate / 100,
+          medianContractValue: globalParams.medianContractValue,
+          convosPerRepPerDay: globalParams.convosPerRepPerDay,
+          eventDays: globalParams.eventDays,
+          expectedValuePerMeeting: globalParams.expectedValuePerMeeting,
+        };
+      }
+
+      function getEventROIParams(eventId) {
+        const p = getEventParams(eventId);
+        return {
+          sponsorshipCost: p.sponsorshipCost,
+          numReps: p.numReps,
+          travelCostPerRep: p.travelCostPerRep,
+          attendeeShowRate: p.attendeeShowRate / 100,
+          convoToMeetingRate: p.convoToMeetingRate / 100,
+          meetingShowRate: p.meetingShowRate / 100,
+          closeRate: p.closeRate / 100,
+          medianContractValue: p.medianContractValue,
+          convosPerRepPerDay: p.convosPerRepPerDay,
+          eventDays: p.eventDays,
+          expectedValuePerMeeting: p.expectedValuePerMeeting,
         };
       }
 
@@ -3098,9 +3243,9 @@
       }
 
       function computeAllROI() {
-        const params = getROIParams();
         EVENTS.forEach((e) => {
           const attendees = parseAttendees(e.attendance);
+          const params = getEventROIParams(e.id);
           e.roi = computeROI(attendees, params);
         });
       }
@@ -3110,6 +3255,404 @@
         render();
       }
       window.recalculateROI = recalculateROI;
+
+      // ROI View tab rendering
+      let roiSortCol = "score";
+      let roiSortDir = -1;
+      let openOverrideId = null;
+
+      function renderROI(events) {
+        const container = document.getElementById("roi-view");
+        const fmtDollar = (v) => "$" + Math.round(v).toLocaleString();
+        const fmtPct = (v) => (v * 100).toFixed(1) + "%";
+
+        // Global params panel
+        const paramDefs = [
+          {
+            key: "sponsorshipCost",
+            label: "Event Sponsorship Cost",
+            step: 500,
+            min: 0,
+          },
+          { key: "numReps", label: "Number of Reps", step: 1, min: 1 },
+          {
+            key: "travelCostPerRep",
+            label: "Travel Cost per Rep",
+            step: 100,
+            min: 0,
+          },
+          {
+            key: "attendeeShowRate",
+            label: "Attendee Show Rate (%)",
+            step: 1,
+            min: 0,
+            max: 100,
+          },
+          {
+            key: "convoToMeetingRate",
+            label: "Convo to Meeting Rate (%)",
+            step: 1,
+            min: 0,
+            max: 100,
+          },
+          {
+            key: "meetingShowRate",
+            label: "Meeting Show Rate (%)",
+            step: 1,
+            min: 0,
+            max: 100,
+          },
+          {
+            key: "closeRate",
+            label: "Close Rate (%)",
+            step: 0.1,
+            min: 0,
+            max: 100,
+          },
+          {
+            key: "medianContractValue",
+            label: "Median Contract Value",
+            step: 1000,
+            min: 0,
+          },
+          {
+            key: "convosPerRepPerDay",
+            label: "Convos per Rep per Day",
+            step: 1,
+            min: 1,
+          },
+          { key: "eventDays", label: "Event Days", step: 1, min: 1 },
+          {
+            key: "expectedValuePerMeeting",
+            label: "Expected Value per Meeting",
+            step: 50,
+            min: 0,
+          },
+        ];
+
+        let paramsHTML = '<div class="roi-params-grid">';
+        paramDefs.forEach((p) => {
+          paramsHTML += `<div class="roi-field">
+            <label>${p.label}</label>
+            <input type="number" id="roi-global-${p.key}" value="${globalParams[p.key]}" min="${p.min}" ${p.max != null ? 'max="' + p.max + '"' : ""} step="${p.step}" />
+          </div>`;
+        });
+        paramsHTML += "</div>";
+
+        // Summary stats
+        const goEvents = events.filter((e) => e.roi && e.roi.verdict === "GO");
+        const nogoEvents = events.filter(
+          (e) => e.roi && e.roi.verdict === "NO-GO",
+        );
+        const avgROI =
+          goEvents.length > 0
+            ? goEvents.reduce((s, e) => s + (e.roi.projectedROI || 0), 0) /
+              goEvents.length
+            : 0;
+        const totalRevenue = goEvents.reduce(
+          (s, e) => s + (e.roi.expectedRevenue || 0),
+          0,
+        );
+
+        // Sort events for ROI table
+        const sorted = [...events].sort((a, b) => {
+          if (a.roi && b.roi && a.roi.verdict !== b.roi.verdict) {
+            return a.roi.verdict === "GO" ? -1 : 1;
+          }
+          let av, bv;
+          if (roiSortCol === "projectedROI") {
+            av = a.roi ? a.roi.projectedROI : -999;
+            bv = b.roi ? b.roi.projectedROI : -999;
+          } else if (roiSortCol === "expectedRevenue") {
+            av = a.roi ? a.roi.expectedRevenue : 0;
+            bv = b.roi ? b.roi.expectedRevenue : 0;
+          } else if (roiSortCol === "totalCost") {
+            av = a.roi ? a.roi.totalCost : 0;
+            bv = b.roi ? b.roi.totalCost : 0;
+          } else if (roiSortCol === "conversationsNeeded") {
+            av = a.roi ? a.roi.conversationsNeeded : 0;
+            bv = b.roi ? b.roi.conversationsNeeded : 0;
+          } else if (roiSortCol === "penetrationRate") {
+            av = a.roi ? a.roi.penetrationRate : 0;
+            bv = b.roi ? b.roi.penetrationRate : 0;
+          } else if (roiSortCol === "repCapacity") {
+            av = a.roi ? a.roi.repCapacity : 0;
+            bv = b.roi ? b.roi.repCapacity : 0;
+          } else if (roiSortCol === "capacityGap") {
+            av = a.roi ? a.roi.capacityGap : 0;
+            bv = b.roi ? b.roi.capacityGap : 0;
+          } else if (roiSortCol === "expectedDeals") {
+            av = a.roi ? a.roi.expectedDeals : 0;
+            bv = b.roi ? b.roi.expectedDeals : 0;
+          } else {
+            av = a[roiSortCol];
+            bv = b[roiSortCol];
+          }
+          if (typeof av === "string") av = av.toLowerCase();
+          if (typeof bv === "string") bv = bv.toLowerCase();
+          if (av < bv) return -1 * roiSortDir;
+          if (av > bv) return 1 * roiSortDir;
+          return 0;
+        });
+
+        // Build ROI table
+        const roiCols = [
+          { key: "name", label: "Event" },
+          { key: "industry", label: "Industry" },
+          { key: "score", label: "ICP" },
+          { key: "attendance", label: "Attend." },
+          { key: "verdict", label: "Verdict" },
+          { key: "totalCost", label: "Total Cost" },
+          { key: "conversationsNeeded", label: "Convos Needed" },
+          { key: "penetrationRate", label: "Pen. Rate" },
+          { key: "repCapacity", label: "Rep Cap." },
+          { key: "capacityGap", label: "Cap. Gap" },
+          { key: "expectedDeals", label: "Exp. Deals" },
+          { key: "expectedRevenue", label: "Exp. Revenue" },
+          { key: "projectedROI", label: "Proj. ROI" },
+          { key: "assessment", label: "Assessment" },
+          { key: "_override", label: "" },
+        ];
+
+        let tableHTML =
+          '<table class="events-table" style="min-width:1200px"><thead><tr>';
+        roiCols.forEach((c) => {
+          if (c.key === "_override") {
+            tableHTML += "<th></th>";
+          } else {
+            const arrow =
+              roiSortCol === c.key
+                ? roiSortDir === 1
+                  ? "&#9650;"
+                  : "&#9660;"
+                : "&#9650;";
+            const cls = roiSortCol === c.key ? " sorted" : "";
+            tableHTML += `<th class="${cls}" onclick="sortROITable('${c.key}')">${c.label} <span class="sort-arrow">${arrow}</span></th>`;
+          }
+        });
+        tableHTML += "</tr></thead><tbody>";
+
+        sorted.forEach((e) => {
+          const roi = e.roi || {};
+          const isGo = roi.verdict === "GO";
+          const rowClass = isGo ? "roi-go-row" : "roi-nogo-row";
+          const verdictBadge = isGo
+            ? '<span class="verdict-go">GO</span>'
+            : '<span class="verdict-nogo">NO-GO</span>';
+          const roiPct =
+            roi.projectedROI != null
+              ? (roi.projectedROI * 100).toFixed(0) + "%"
+              : "-";
+          const roiColor =
+            roi.projectedROI >= 0 ? "color:#16a34a" : "color:#dc2626";
+          const expRev =
+            roi.expectedRevenue != null ? fmtDollar(roi.expectedRevenue) : "-";
+          const hasOvr = hasOverrides(e.id);
+          const ovrBtnClass = hasOvr
+            ? "override-btn has-override"
+            : "override-btn";
+          const ovrLabel = hasOvr ? "Customized" : "Override";
+
+          tableHTML += `<tr class="${rowClass}" style="cursor:pointer">
+            <td onclick="showEventModal(${e.id})" style="font-weight:600;color:var(--navy);min-width:180px">${e.name}</td>
+            <td onclick="showEventModal(${e.id})"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span></td>
+            <td onclick="showEventModal(${e.id})" class="table-icp ${icpClass(e.score)}" style="background:none;text-align:center">${e.score}</td>
+            <td onclick="showEventModal(${e.id})">${e.attendance}</td>
+            <td onclick="showEventModal(${e.id})">${verdictBadge}</td>
+            <td onclick="showEventModal(${e.id})">${fmtDollar(roi.totalCost || 0)}</td>
+            <td onclick="showEventModal(${e.id})">${roi.conversationsNeeded != null ? roi.conversationsNeeded : "-"}</td>
+            <td onclick="showEventModal(${e.id})">${roi.penetrationRate != null ? fmtPct(roi.penetrationRate) : "-"}</td>
+            <td onclick="showEventModal(${e.id})">${roi.repCapacity != null ? roi.repCapacity : "-"}</td>
+            <td onclick="showEventModal(${e.id})" style="${roi.capacityGap >= 0 ? "color:#16a34a" : "color:#dc2626"};font-weight:600">${roi.capacityGap != null ? (roi.capacityGap >= 0 ? "+" : "") + roi.capacityGap : "-"}</td>
+            <td onclick="showEventModal(${e.id})">${roi.expectedDeals != null ? roi.expectedDeals.toFixed(1) : "-"}</td>
+            <td onclick="showEventModal(${e.id})" style="font-weight:600">${expRev}</td>
+            <td onclick="showEventModal(${e.id})" style="font-weight:700;${roiColor}">${roiPct}</td>
+            <td onclick="showEventModal(${e.id})" style="font-size:12px;color:var(--gray-500);max-width:160px">${roi.assessment || "-"}</td>
+            <td><button class="${ovrBtnClass}" onclick="event.stopPropagation();toggleOverride(${e.id})">${ovrLabel}</button></td>
+          </tr>`;
+
+          // Inline override panel
+          if (openOverrideId === e.id) {
+            const ep = getEventParams(e.id);
+            tableHTML += `<tr class="${rowClass}"><td colspan="15" style="padding:0">
+              <div class="override-panel">
+                <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Override Parameters for ${e.name}</div>
+                <div class="override-grid">
+                  <div class="roi-field"><label>Reps Attending</label><input type="number" id="ovr-reps-${e.id}" value="${ep.numReps}" min="1" step="1" /></div>
+                  <div class="roi-field"><label>Event Days</label><input type="number" id="ovr-days-${e.id}" value="${ep.eventDays}" min="1" step="1" /></div>
+                  <div class="roi-field"><label>Sponsorship Cost</label><input type="number" id="ovr-cost-${e.id}" value="${ep.sponsorshipCost}" min="0" step="500" /></div>
+                  <div class="roi-field"><label>Convos/Rep/Day</label><input type="number" id="ovr-convos-${e.id}" value="${ep.convosPerRepPerDay}" min="1" step="1" /></div>
+                </div>
+                <div class="override-actions">
+                  <button class="override-save-btn" onclick="saveEventOverride(${e.id})">Save Override</button>
+                  <button class="override-reset-btn" onclick="resetEventOverride(${e.id})">Reset to Default</button>
+                </div>
+              </div>
+            </td></tr>`;
+          }
+        });
+
+        tableHTML += "</tbody></table>";
+
+        container.innerHTML = `
+          <div class="roi-global-params">
+            <div class="roi-global-title">Global Assumptions</div>
+            <div class="roi-global-subtitle">These defaults apply to all events unless overridden per-event</div>
+            ${paramsHTML}
+            <button class="roi-recalc-btn" onclick="applyGlobalParams()">Apply to All Events</button>
+          </div>
+          <div class="roi-summary-stats">
+            <div class="roi-stat-card">
+              <div class="roi-stat-value" style="color:#16a34a">${goEvents.length}</div>
+              <div class="roi-stat-label">Total GO Events</div>
+            </div>
+            <div class="roi-stat-card">
+              <div class="roi-stat-value" style="color:#dc2626">${nogoEvents.length}</div>
+              <div class="roi-stat-label">Total NO-GO Events</div>
+            </div>
+            <div class="roi-stat-card">
+              <div class="roi-stat-value">${(avgROI * 100).toFixed(0)}%</div>
+              <div class="roi-stat-label">Avg Projected ROI (GO)</div>
+            </div>
+            <div class="roi-stat-card">
+              <div class="roi-stat-value">${fmtDollar(totalRevenue)}</div>
+              <div class="roi-stat-label">Total Expected Revenue (GO)</div>
+            </div>
+          </div>
+          <div class="roi-table-wrap">
+            ${tableHTML}
+          </div>
+        `;
+      }
+
+      function sortROITable(col) {
+        if (roiSortCol === col) {
+          roiSortDir *= -1;
+        } else {
+          roiSortCol = col;
+          roiSortDir = col === "score" ? -1 : 1;
+        }
+        render();
+      }
+      window.sortROITable = sortROITable;
+
+      function toggleOverride(eventId) {
+        openOverrideId = openOverrideId === eventId ? null : eventId;
+        render();
+      }
+      window.toggleOverride = toggleOverride;
+
+      function saveEventOverride(eventId) {
+        const reps = parseInt(
+          document.getElementById("ovr-reps-" + eventId).value,
+        );
+        const days = parseInt(
+          document.getElementById("ovr-days-" + eventId).value,
+        );
+        const cost = parseFloat(
+          document.getElementById("ovr-cost-" + eventId).value,
+        );
+        const convos = parseInt(
+          document.getElementById("ovr-convos-" + eventId).value,
+        );
+        eventOverrides[eventId] = {
+          numReps: reps || globalParams.numReps,
+          eventDays: days || globalParams.eventDays,
+          sponsorshipCost: cost != null ? cost : globalParams.sponsorshipCost,
+          convosPerRepPerDay: convos || globalParams.convosPerRepPerDay,
+        };
+        saveOverrides();
+        openOverrideId = null;
+        computeAllROI();
+        render();
+      }
+      window.saveEventOverride = saveEventOverride;
+
+      function resetEventOverride(eventId) {
+        delete eventOverrides[eventId];
+        saveOverrides();
+        openOverrideId = null;
+        computeAllROI();
+        render();
+      }
+      window.resetEventOverride = resetEventOverride;
+
+      function applyGlobalParams() {
+        const paramDefs = [
+          "sponsorshipCost",
+          "numReps",
+          "travelCostPerRep",
+          "attendeeShowRate",
+          "convoToMeetingRate",
+          "meetingShowRate",
+          "closeRate",
+          "medianContractValue",
+          "convosPerRepPerDay",
+          "eventDays",
+          "expectedValuePerMeeting",
+        ];
+        paramDefs.forEach((key) => {
+          const el = document.getElementById("roi-global-" + key);
+          if (el) globalParams[key] = parseFloat(el.value) || 0;
+        });
+        computeAllROI();
+        render();
+      }
+      window.applyGlobalParams = applyGlobalParams;
+
+      // Modal override helpers
+      function saveModalOverride(eventId) {
+        const reps = parseInt(
+          document.getElementById("modal-ovr-reps-" + eventId).value,
+        );
+        const days = parseInt(
+          document.getElementById("modal-ovr-days-" + eventId).value,
+        );
+        const cost = parseFloat(
+          document.getElementById("modal-ovr-cost-" + eventId).value,
+        );
+        const convos = parseInt(
+          document.getElementById("modal-ovr-convos-" + eventId).value,
+        );
+        eventOverrides[eventId] = {
+          numReps: reps || globalParams.numReps,
+          eventDays: days || globalParams.eventDays,
+          sponsorshipCost: cost != null ? cost : globalParams.sponsorshipCost,
+          convosPerRepPerDay: convos || globalParams.convosPerRepPerDay,
+        };
+        saveOverrides();
+        computeAllROI();
+        // Re-open modal with updated data
+        document.getElementById("event-modal").remove();
+        showEventModal(eventId);
+        render();
+      }
+      window.saveModalOverride = saveModalOverride;
+
+      function resetModalOverride(eventId) {
+        delete eventOverrides[eventId];
+        saveOverrides();
+        computeAllROI();
+        document.getElementById("event-modal").remove();
+        showEventModal(eventId);
+        render();
+      }
+      window.resetModalOverride = resetModalOverride;
+
+      function toggleModalCustomize(eventId) {
+        const panel = document.getElementById(
+          "modal-override-panel-" + eventId,
+        );
+        const btn = document.getElementById("modal-customize-btn-" + eventId);
+        if (panel.style.display === "none") {
+          panel.style.display = "block";
+          btn.classList.add("active");
+        } else {
+          panel.style.display = "none";
+          btn.classList.remove("active");
+        }
+      }
+      window.toggleModalCustomize = toggleModalCustomize;
 
       // Compute initial ROI
       computeAllROI();
@@ -3302,7 +3845,7 @@
       <td data-label="Industry"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span></td>
       <td class="table-icp ${icpClass(e.score)}" style="background:none" data-label="ICP Score">${e.score}</td>
       <td data-label="Attendance">${e.attendance}</td>
-      <td data-label="Verdict">${verdictBadge}</td>
+      <td data-label="Verdict">${verdictBadge}${hasOverrides(e.id) ? '<span class="customized-dot" title="Custom overrides active"></span>' : ""}</td>
       <td data-label="Proj. ROI" style="font-weight:700;${roiColor}">${roiPct}</td>
       <td data-label="Revenue" style="font-weight:600">${expRev}</td>
       <td data-label="Assessment" style="font-size:12px;color:var(--gray-500);max-width:180px">${roi.assessment || "-"}</td>
@@ -3640,9 +4183,14 @@
               : '<span class="verdict-nogo" style="font-size:14px;padding:6px 16px;">NO-GO</span>';
           const fmtDollar = (v) => "$" + Math.round(v).toLocaleString();
           const fmtPct = (v) => (v * 100).toFixed(1) + "%";
+          const ep = getEventParams(e.id);
+          const hasOvr = hasOverrides(e.id);
+          const ovrBadge = hasOvr
+            ? '<span class="modal-override-badge">Custom overrides active</span>'
+            : "";
           roiHTML = `
             <div class="roi-section">
-              <div class="roi-section-title">ROI Analysis</div>
+              <div class="roi-section-title">ROI Analysis ${ovrBadge}</div>
               <div style="margin-bottom:12px;">${vBadge} <span style="margin-left:10px;font-size:14px;color:var(--gray-600);">${r.assessment}</span></div>
               <div class="roi-grid">
                 <div class="roi-grid-item"><div class="rgi-label">Total Cost</div><div class="rgi-value">${fmtDollar(r.totalCost)}</div></div>
@@ -3653,6 +4201,19 @@
                 <div class="roi-grid-item"><div class="rgi-label">Expected Deals</div><div class="rgi-value">${r.expectedDeals.toFixed(1)}</div></div>
                 <div class="roi-grid-item"><div class="rgi-label">Expected Revenue</div><div class="rgi-value ${r.expectedRevenue > r.totalCost ? "favorable" : "unfavorable"}">${fmtDollar(r.expectedRevenue)}</div></div>
                 <div class="roi-grid-item"><div class="rgi-label">Projected ROI</div><div class="rgi-value ${r.projectedROI >= 0 ? "favorable" : "unfavorable"}">${fmtPct(r.projectedROI)}</div></div>
+              </div>
+              <button class="modal-customize-toggle ${hasOvr ? "active" : ""}" id="modal-customize-btn-${e.id}" onclick="toggleModalCustomize(${e.id})">Customize ROI</button>
+              <div class="modal-override-panel" id="modal-override-panel-${e.id}" style="display:none">
+                <div class="modal-override-grid">
+                  <div class="roi-field"><label>Reps Attending</label><input type="number" id="modal-ovr-reps-${e.id}" value="${ep.numReps}" min="1" step="1" /></div>
+                  <div class="roi-field"><label>Event Days</label><input type="number" id="modal-ovr-days-${e.id}" value="${ep.eventDays}" min="1" step="1" /></div>
+                  <div class="roi-field"><label>Sponsorship Cost</label><input type="number" id="modal-ovr-cost-${e.id}" value="${ep.sponsorshipCost}" min="0" step="500" /></div>
+                  <div class="roi-field"><label>Convos/Rep/Day</label><input type="number" id="modal-ovr-convos-${e.id}" value="${ep.convosPerRepPerDay}" min="1" step="1" /></div>
+                </div>
+                <div class="override-actions">
+                  <button class="override-save-btn" onclick="saveModalOverride(${e.id})">Save</button>
+                  <button class="override-reset-btn" onclick="resetModalOverride(${e.id})">Reset</button>
+                </div>
               </div>
             </div>`;
         }
@@ -3718,6 +4279,7 @@
         document.getElementById("calendar-view").style.display = "none";
         document.getElementById("table-view").style.display = "none";
         document.getElementById("map-view").style.display = "none";
+        document.getElementById("roi-view").style.display = "none";
 
         if (currentView === "calendar") {
           renderCalendar(filtered);
@@ -3725,6 +4287,9 @@
         } else if (currentView === "map") {
           renderMap(filtered);
           document.getElementById("map-view").style.display = "flex";
+        } else if (currentView === "roi") {
+          renderROI(filtered);
+          document.getElementById("roi-view").style.display = "";
         } else {
           renderTable(filtered);
           document.getElementById("table-view").style.display = "";
