@@ -4290,7 +4290,11 @@
               roi.expectedRevenue != null
                 ? "$" + Math.round(roi.expectedRevenue).toLocaleString()
                 : "-";
-            html += `<div class="event-card" onclick="showEventModal(${e.id})">
+            const cardBorder =
+              roi.verdict === "GO"
+                ? "border-color:#22c55e;border-width:2px"
+                : "border-color:#ef4444;border-width:2px";
+            html += `<div class="event-card" style="${cardBorder}" onclick="showEventModal(${e.id})">
         <div class="event-card-top">
           <div class="event-name">${e.name}</div>
           <div style="display:flex;align-items:center;gap:6px">
