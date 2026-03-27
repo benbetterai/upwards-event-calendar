@@ -756,6 +756,16 @@
           border-radius: 16px 16px 0 0;
           animation: slideUpModal 0.3s ease;
         }
+        .modal-content-grid {
+          grid-template-columns: 1fr;
+        }
+        .modal-left {
+          border-right: none;
+          border-bottom: 1px solid var(--gray-200);
+        }
+        .modal-right {
+          max-height: none;
+        }
         @keyframes slideUpModal {
           from {
             opacity: 0;
@@ -976,12 +986,24 @@
         background: var(--white);
         border-radius: var(--radius-lg);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        max-width: 560px;
+        max-width: 960px;
         width: 100%;
-        max-height: 85vh;
+        max-height: 92vh;
         overflow-y: auto;
         position: relative;
         animation: fadeInModal 0.25s ease;
+      }
+      .modal-content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+      }
+      .modal-left {
+        border-right: 1px solid var(--gray-200);
+      }
+      .modal-right {
+        overflow-y: auto;
+        max-height: 75vh;
       }
       @keyframes fadeInModal {
         from {
@@ -5297,7 +5319,7 @@
         backdrop.innerHTML = `
           <div class="modal-panel">
             <button class="modal-close" onclick="document.getElementById('event-modal').remove()">&times;</button>
-            <div class="modal-header">
+            <div class="modal-header" style="padding:24px 28px 16px;">
               <div class="modal-name">${e.name}</div>
               <div class="modal-badges">
                 <span class="industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}
@@ -5307,20 +5329,30 @@
                 </span>
               </div>
             </div>
-            <div class="modal-body">
-              <div class="modal-meta">
-                <div class="modal-meta-row"><span class="modal-meta-icon">&#128197;</span> <strong>${e.dates}</strong></div>
-                <div class="modal-meta-row"><span class="modal-meta-icon">&#128205;</span> ${e.location}</div>
-                <div class="modal-meta-row"><span class="modal-meta-icon">&#128101;</span> ${e.attendance} estimated attendance</div>
+            <div class="modal-content-grid">
+              <div class="modal-left">
+                <div class="modal-body">
+                  <div class="modal-meta">
+                    <div class="modal-meta-row"><span class="modal-meta-icon">&#128197;</span> <strong>${e.dates}</strong></div>
+                    <div class="modal-meta-row"><span class="modal-meta-icon">&#128205;</span> ${e.location}</div>
+                    <div class="modal-meta-row"><span class="modal-meta-icon">&#128101;</span> ${e.attendance} estimated attendance</div>
+                  </div>
+                  <div class="modal-why-section">
+                    <div class="modal-why-title">Why This Event Matters for Upwards</div>
+                    <div class="modal-why-text">${e.why}</div>
+                  </div>
+                  <div class="modal-actions">
+                    ${actionsHTML}
+                  </div>
+                </div>
               </div>
-              <div class="modal-why-section">
-                <div class="modal-why-title">Why This Event Matters for Upwards</div>
-                <div class="modal-why-text">${e.why}</div>
+              <div class="modal-right">
+                <div class="modal-body">
+                  ${roiHTML}
+                </div>
               </div>
-              ${roiHTML}
-              <div class="modal-actions">
-                ${actionsHTML}
-              </div>
+            </div>
+            <div style="display:none">
             </div>
           </div>
         `;
