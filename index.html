@@ -13,6 +13,7 @@
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
       *,
       *::before,
@@ -327,6 +328,45 @@
         background: rgba(255, 255, 255, 0.1);
         color: white;
         border-color: rgba(255, 255, 255, 0.4);
+      }
+      .nav-add-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 16px;
+        border: 1px solid var(--teal);
+        background: var(--teal);
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        transition: all 0.15s;
+        margin-left: 8px;
+      }
+      .nav-add-btn:hover {
+        background: var(--teal-light);
+      }
+      .add-modal-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .add-modal-form-grid .custom-form-wide {
+        grid-column: span 2;
+      }
+      @media (max-width: 480px) {
+        .add-modal-form-grid {
+          grid-template-columns: 1fr;
+        }
+        .add-modal-form-grid .custom-form-wide {
+          grid-column: span 1;
+        }
+        .nav-add-btn {
+          display: none;
+        }
       }
       .nav-results {
         font-size: 12px;
@@ -1876,6 +1916,9 @@
         <button onclick="exportCSV()" class="nav-export-btn">
           &#x2B07; Export CSV
         </button>
+        <button onclick="showAddEventModal()" class="nav-add-btn">
+          + Add Event
+        </button>
       </div>
     </nav>
 
@@ -1898,6 +1941,14 @@
     </div>
 
     <script>
+      const SUPABASE_URL = "https://eghwnnvvoropndudiptr.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnaHdubnZ2b3JvcG5kdWRpcHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMzI4MzMsImV4cCI6MjA3MzkwODgzM30.9EIDCcPOanEYkP7azORaT315kMsn_mR83rfnVJqBNCI";
+      const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY,
+      );
+
       const EVENTS = [
         // Cross-Industry
         {
@@ -3188,20 +3239,63 @@
         },
       ];
 
-      // Load custom events from localStorage
+      // Load custom events from Supabase
       let customNextId = 1000;
-      (function loadCustomEvents() {
-        const saved = JSON.parse(localStorage.getItem("customEvents") || "[]");
-        saved.forEach((ce) => {
-          ce.isCustom = true;
-          EVENTS.push(ce);
-          if (ce.id >= customNextId) customNextId = ce.id + 1;
+      async function loadCustomEvents() {
+        const { data, error } = await supabaseClient
+          .from("custom_events")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (error) {
+          console.error("Failed to load custom events:", error);
+          return;
+        }
+        data.forEach((ce) => {
+          const newEvent = {
+            id: 1000 + ce.id,
+            dbId: ce.id,
+            name: ce.name,
+            dates: ce.dates || "",
+            month: ce.month || "",
+            location: ce.location || "",
+            industry: ce.industry || "Other",
+            color: ce.color || "#64748b",
+            score: ce.score || 5,
+            attendance: ce.attendance || "0",
+            why: ce.why || "",
+            url: ce.url || null,
+            exhibitor_url: ce.exhibitor_url || null,
+            isCustom: true,
+          };
+          if (!EVENTS.find((e) => e.id === newEvent.id)) {
+            EVENTS.push(newEvent);
+            if (newEvent.id >= customNextId) customNextId = newEvent.id + 1;
+          }
         });
-      })();
+      }
 
-      function saveCustomEvents() {
-        const customs = EVENTS.filter((e) => e.isCustom);
-        localStorage.setItem("customEvents", JSON.stringify(customs));
+      async function saveCustomEventToSupabase(eventData) {
+        const { data, error } = await supabaseClient
+          .from("custom_events")
+          .insert([eventData])
+          .select();
+        if (error) {
+          alert("Failed to save event: " + error.message);
+          return null;
+        }
+        return data[0];
+      }
+
+      async function deleteCustomEventFromSupabase(dbId) {
+        const { error } = await supabaseClient
+          .from("custom_events")
+          .delete()
+          .eq("id", dbId);
+        if (error) {
+          alert("Failed to delete event: " + error.message);
+          return false;
+        }
+        return true;
       }
 
       // Industry color map for custom events
@@ -3404,13 +3498,56 @@
         return p;
       }
 
-      // Per-event overrides persisted in localStorage
-      let eventOverrides = JSON.parse(
-        localStorage.getItem("eventOverrides") || "{}",
-      );
+      // Per-event overrides persisted in Supabase
+      let eventOverrides = {};
 
-      function saveOverrides() {
-        localStorage.setItem("eventOverrides", JSON.stringify(eventOverrides));
+      async function loadOverrides() {
+        const { data, error } = await supabaseClient
+          .from("event_overrides")
+          .select("*");
+        if (error) {
+          console.error("Failed to load overrides:", error);
+          return;
+        }
+        data.forEach((o) => {
+          eventOverrides[o.event_id] = {};
+          if (o.num_reps != null)
+            eventOverrides[o.event_id].numReps = o.num_reps;
+          if (o.event_days != null)
+            eventOverrides[o.event_id].eventDays = o.event_days;
+          if (o.sponsorship_cost != null)
+            eventOverrides[o.event_id].sponsorshipCost = Number(
+              o.sponsorship_cost,
+            );
+          if (o.convos_per_rep_per_day != null)
+            eventOverrides[o.event_id].convosPerRepPerDay =
+              o.convos_per_rep_per_day;
+        });
+      }
+
+      async function saveOverrides(eventId) {
+        if (!eventId) return;
+        const overrideData = eventOverrides[eventId];
+        if (!overrideData) return;
+        const row = {
+          event_id: eventId,
+          num_reps: overrideData.numReps || null,
+          event_days: overrideData.eventDays || null,
+          sponsorship_cost: overrideData.sponsorshipCost || null,
+          convos_per_rep_per_day: overrideData.convosPerRepPerDay || null,
+          updated_at: new Date().toISOString(),
+        };
+        const { error } = await supabaseClient
+          .from("event_overrides")
+          .upsert(row, { onConflict: "event_id" });
+        if (error) console.error("Failed to save override:", error);
+      }
+
+      async function deleteOverride(eventId) {
+        await supabaseClient
+          .from("event_overrides")
+          .delete()
+          .eq("event_id", eventId);
       }
 
       function getEventParams(eventId, attendees) {
@@ -3821,49 +3958,6 @@
       }
 
       function renderCustomEventForm() {
-        const allIndustries = [
-          "Cross-Industry",
-          "Healthcare",
-          "Hospitality",
-          "Manufacturing",
-          "Retail",
-          "Transportation / Logistics",
-          "Staffing / Workforce",
-          "Quick-Service Restaurants",
-          "Senior Care / Home Health",
-          "Grocery / Supermarket",
-          "Facilities / Janitorial",
-          "Construction / Trades",
-          "Agriculture",
-          "Other",
-        ];
-        const months = [
-          "Apr 2026",
-          "May 2026",
-          "Jun 2026",
-          "Jul 2026",
-          "Aug 2026",
-          "Sep 2026",
-          "Oct 2026",
-          "Nov 2026",
-          "Dec 2026",
-          "Jan 2027",
-          "Feb 2027",
-          "Mar 2027",
-        ];
-        const icpOptions = Array.from({ length: 10 }, (_, i) => i + 1)
-          .map(
-            (v) =>
-              `<option value="${v}" ${v === 5 ? "selected" : ""}>${v}</option>`,
-          )
-          .join("");
-        const industryOptions = allIndustries
-          .map((i) => `<option value="${i}">${i}</option>`)
-          .join("");
-        const monthOptions = months
-          .map((m) => `<option value="${m}">${m}</option>`)
-          .join("");
-
         // List of current custom events
         const customEvents = EVENTS.filter((e) => e.isCustom);
         let listHTML = "";
@@ -3883,56 +3977,13 @@
         }
 
         return `<div class="custom-event-form">
-          <div class="custom-event-title">Add Custom Event</div>
-          <div class="custom-event-subtitle">Add your own events to score and compare alongside researched events</div>
-          <div class="custom-form-grid">
-            <div class="custom-form-field">
-              <label>Event Name *</label>
-              <input type="text" id="custom-name" placeholder="e.g. SHRM Annual" required />
-            </div>
-            <div class="custom-form-field">
-              <label>Dates</label>
-              <input type="text" id="custom-dates" placeholder="e.g. Jun 15-17" />
-            </div>
-            <div class="custom-form-field">
-              <label>Month</label>
-              <select id="custom-month">${monthOptions}</select>
-            </div>
-            <div class="custom-form-field">
-              <label>Location</label>
-              <input type="text" id="custom-location" placeholder="e.g. Dallas, TX" />
-            </div>
-            <div class="custom-form-field">
-              <label>Industry</label>
-              <select id="custom-industry">${industryOptions}</select>
-            </div>
-            <div class="custom-form-field">
-              <label>Estimated Attendance *</label>
-              <input type="number" id="custom-attendance" placeholder="e.g. 5000" min="1" required />
-            </div>
-            <div class="custom-form-field">
-              <label>ICP Score (1-10)</label>
-              <select id="custom-icp">${icpOptions}</select>
-            </div>
-            <div class="custom-form-field">
-              <label>Event URL</label>
-              <input type="text" id="custom-url" placeholder="https://..." />
-            </div>
-            <div class="custom-form-field">
-              <label>Exhibitor URL</label>
-              <input type="text" id="custom-exhibitor-url" placeholder="https://..." />
-            </div>
-            <div class="custom-form-field custom-form-wide">
-              <label>Why It Matters</label>
-              <textarea id="custom-why" placeholder="Optional notes on why this event is relevant..."></textarea>
-            </div>
-          </div>
-          <button class="add-event-btn" onclick="addCustomEvent()">Add Event</button>
-          ${listHTML}
+          <div class="custom-event-title">Custom Events</div>
+          <div class="custom-event-subtitle">Custom events are shared across the team via Supabase. Use the "+ Add Event" button in the nav bar to add new events.</div>
+          ${listHTML || '<p style="color:var(--gray-400);font-size:13px;margin-top:8px">No custom events yet. Click "+ Add Event" in the nav bar to get started.</p>'}
         </div>`;
       }
 
-      function addCustomEvent() {
+      async function addCustomEvent() {
         const name = document.getElementById("custom-name").value.trim();
         const attendance = document.getElementById("custom-attendance").value;
         if (!name) {
@@ -3948,8 +3999,7 @@
         const color =
           INDUSTRY_COLORS[industry] || INDUSTRY_COLORS["Other"] || "#6b7280";
 
-        const newEvent = {
-          id: customNextId++,
+        const dbRow = {
           name: name,
           dates: document.getElementById("custom-dates").value.trim() || "TBD",
           month: document.getElementById("custom-month").value,
@@ -3966,6 +4016,25 @@
           why:
             document.getElementById("custom-why").value.trim() ||
             "Custom event added by user.",
+        };
+
+        const saved = await saveCustomEventToSupabase(dbRow);
+        if (!saved) return;
+
+        const newEvent = {
+          id: 1000 + saved.id,
+          dbId: saved.id,
+          name: saved.name,
+          dates: saved.dates || "",
+          month: saved.month || "",
+          location: saved.location || "",
+          industry: saved.industry || "Other",
+          color: saved.color || "#64748b",
+          score: saved.score || 5,
+          attendance: saved.attendance || "0",
+          why: saved.why || "",
+          url: saved.url || null,
+          exhibitor_url: saved.exhibitor_url || null,
           isCustom: true,
         };
 
@@ -3974,87 +4043,38 @@
           .split(",")
           .map((s) => s.trim());
         const lastPart = locParts[locParts.length - 1];
-        const stateAbbrs = [
-          "AL",
-          "AK",
-          "AZ",
-          "AR",
-          "CA",
-          "CO",
-          "CT",
-          "DC",
-          "DE",
-          "FL",
-          "GA",
-          "HI",
-          "ID",
-          "IL",
-          "IN",
-          "IA",
-          "KS",
-          "KY",
-          "LA",
-          "ME",
-          "MD",
-          "MA",
-          "MI",
-          "MN",
-          "MS",
-          "MO",
-          "MT",
-          "NE",
-          "NV",
-          "NH",
-          "NJ",
-          "NM",
-          "NY",
-          "NC",
-          "ND",
-          "OH",
-          "OK",
-          "OR",
-          "PA",
-          "RI",
-          "SC",
-          "SD",
-          "TN",
-          "TX",
-          "UT",
-          "VT",
-          "VA",
-          "WA",
-          "WV",
-          "WI",
-          "WY",
-        ];
-        newEvent.state = stateAbbrs.includes(lastPart) ? lastPart : null;
+        newEvent.state = STATE_ABBR.includes(lastPart) ? lastPart : null;
 
         EVENTS.push(newEvent);
-        saveCustomEvents();
         computeAllROI();
-        // Update stat
-        const statEl = document.getElementById("stat-events");
-        if (statEl) statEl.textContent = EVENTS.length;
-        const statTop = document.getElementById("stat-top");
-        if (statTop)
-          statTop.textContent = EVENTS.filter((e) => e.score >= 9).length;
+        document.getElementById("stat-total").textContent = EVENTS.length;
+        document.getElementById("stat-top").textContent = EVENTS.filter(
+          (e) => e.score >= 9,
+        ).length;
         render();
+
+        // Close modal if it exists
+        const modal = document.getElementById("add-event-modal");
+        if (modal) modal.remove();
       }
       window.addCustomEvent = addCustomEvent;
 
-      function removeCustomEvent(eventId) {
+      async function removeCustomEvent(eventId) {
+        const evt = EVENTS.find((e) => e.id === eventId);
+        if (evt && evt.dbId) {
+          const ok = await deleteCustomEventFromSupabase(evt.dbId);
+          if (!ok) return;
+        }
         const idx = EVENTS.findIndex((e) => e.id === eventId);
         if (idx !== -1) EVENTS.splice(idx, 1);
         // Also remove any overrides
         delete eventOverrides[eventId];
-        saveOverrides();
-        saveCustomEvents();
+        await deleteOverride(eventId);
         computeAllROI();
-        const statEl = document.getElementById("stat-events");
-        if (statEl) statEl.textContent = EVENTS.length;
-        const statTop = document.getElementById("stat-top");
-        if (statTop)
-          statTop.textContent = EVENTS.filter((e) => e.score >= 9).length;
+        document.getElementById("stat-total").textContent = EVENTS.length;
+        document.getElementById("stat-top").textContent = EVENTS.filter(
+          (e) => e.score >= 9,
+        ).length;
         render();
       }
       window.removeCustomEvent = removeCustomEvent;
@@ -4076,7 +4096,7 @@
       }
       window.toggleOverride = toggleOverride;
 
-      function saveEventOverride(eventId) {
+      async function saveEventOverride(eventId) {
         const reps = parseInt(
           document.getElementById("ovr-reps-" + eventId).value,
         );
@@ -4095,16 +4115,16 @@
           sponsorshipCost: cost != null ? cost : globalParams.sponsorshipCost,
           convosPerRepPerDay: convos || globalParams.convosPerRepPerDay,
         };
-        saveOverrides();
+        await saveOverrides(eventId);
         openOverrideId = null;
         computeAllROI();
         render();
       }
       window.saveEventOverride = saveEventOverride;
 
-      function resetEventOverride(eventId) {
+      async function resetEventOverride(eventId) {
         delete eventOverrides[eventId];
-        saveOverrides();
+        await deleteOverride(eventId);
         openOverrideId = null;
         computeAllROI();
         render();
@@ -4146,7 +4166,7 @@
       window.toggleSmartDefaults = toggleSmartDefaults;
 
       // Modal override helpers
-      function saveModalOverride(eventId) {
+      async function saveModalOverride(eventId) {
         const reps = parseInt(
           document.getElementById("modal-ovr-reps-" + eventId).value,
         );
@@ -4165,7 +4185,7 @@
           sponsorshipCost: cost != null ? cost : globalParams.sponsorshipCost,
           convosPerRepPerDay: convos || globalParams.convosPerRepPerDay,
         };
-        saveOverrides();
+        await saveOverrides(eventId);
         computeAllROI();
         // Re-open modal with updated data
         document.getElementById("event-modal").remove();
@@ -4174,9 +4194,9 @@
       }
       window.saveModalOverride = saveModalOverride;
 
-      function resetModalOverride(eventId) {
+      async function resetModalOverride(eventId) {
         delete eventOverrides[eventId];
-        saveOverrides();
+        await deleteOverride(eventId);
         computeAllROI();
         document.getElementById("event-modal").remove();
         showEventModal(eventId);
@@ -4198,9 +4218,6 @@
         }
       }
       window.toggleModalCustomize = toggleModalCustomize;
-
-      // Compute initial ROI
-      computeAllROI();
 
       // State
       let currentView = "table";
@@ -4961,13 +4978,143 @@
       }
       window.exportCSV = exportCSV;
 
-      // Initial render
-      render();
+      // Add Event Modal
+      function showAddEventModal() {
+        const allIndustries = [
+          "Cross-Industry",
+          "Security Services",
+          "Skilled Trades",
+          "Corrections/Detention",
+          "Fire/EMS/Paramedics",
+          "Long-Term Care",
+          "Healthcare",
+          "Hospitality",
+          "Transportation",
+          "Staffing",
+          "Warehousing/Distribution",
+          "Landscaping",
+          "Quick-Service Restaurants",
+          "Other",
+        ];
+        const months = [
+          "Apr 2026",
+          "May 2026",
+          "Jun 2026",
+          "Jul 2026",
+          "Aug 2026",
+          "Sep 2026",
+          "Oct 2026",
+          "Nov 2026",
+          "Dec 2026",
+          "Jan 2027",
+          "Feb 2027",
+          "Mar 2027",
+        ];
+        const icpOptions = Array.from({ length: 10 }, (_, i) => i + 1)
+          .map(
+            (v) =>
+              `<option value="${v}" ${v === 5 ? "selected" : ""}>${v}</option>`,
+          )
+          .join("");
+        const industryOptions = allIndustries
+          .map((i) => `<option value="${i}">${i}</option>`)
+          .join("");
+        const monthOptions = months
+          .map((m) => `<option value="${m}">${m}</option>`)
+          .join("");
 
-      // Update top events stat
-      document.getElementById("stat-top").textContent = EVENTS.filter(
-        (e) => e.score >= 9,
-      ).length;
+        const backdrop = document.createElement("div");
+        backdrop.className = "modal-backdrop";
+        backdrop.id = "add-event-modal";
+        backdrop.onclick = (e) => {
+          if (e.target === backdrop) backdrop.remove();
+        };
+        backdrop.innerHTML = `
+          <div class="modal-panel" style="max-width:620px" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="document.getElementById('add-event-modal').remove()">&times;</button>
+            <div class="modal-header">
+              <div class="modal-name">Add Custom Event</div>
+            </div>
+            <div class="modal-body">
+              <div class="add-modal-form-grid">
+                <div class="custom-form-field">
+                  <label>Event Name *</label>
+                  <input type="text" id="custom-name" placeholder="e.g. SHRM Annual" required />
+                </div>
+                <div class="custom-form-field">
+                  <label>Dates</label>
+                  <input type="text" id="custom-dates" placeholder="e.g. Jun 15-17" />
+                </div>
+                <div class="custom-form-field">
+                  <label>Month</label>
+                  <select id="custom-month">${monthOptions}</select>
+                </div>
+                <div class="custom-form-field">
+                  <label>Location</label>
+                  <input type="text" id="custom-location" placeholder="e.g. Dallas, TX" />
+                </div>
+                <div class="custom-form-field">
+                  <label>Industry</label>
+                  <select id="custom-industry">${industryOptions}</select>
+                </div>
+                <div class="custom-form-field">
+                  <label>Estimated Attendance *</label>
+                  <input type="number" id="custom-attendance" placeholder="e.g. 5000" min="1" required />
+                </div>
+                <div class="custom-form-field">
+                  <label>ICP Score (1-10)</label>
+                  <select id="custom-icp">${icpOptions}</select>
+                </div>
+                <div class="custom-form-field">
+                  <label>Event URL</label>
+                  <input type="text" id="custom-url" placeholder="https://..." />
+                </div>
+                <div class="custom-form-field">
+                  <label>Exhibitor URL</label>
+                  <input type="text" id="custom-exhibitor-url" placeholder="https://..." />
+                </div>
+                <div class="custom-form-field custom-form-wide">
+                  <label>Why It Matters</label>
+                  <textarea id="custom-why" placeholder="Optional notes on why this event is relevant..."></textarea>
+                </div>
+              </div>
+              <button class="add-event-btn" style="width:100%;margin-top:16px" onclick="addCustomEvent()">Add Event</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(backdrop);
+
+        const escHandler = (e) => {
+          if (e.key === "Escape") {
+            backdrop.remove();
+            document.removeEventListener("keydown", escHandler);
+          }
+        };
+        document.addEventListener("keydown", escHandler);
+      }
+      window.showAddEventModal = showAddEventModal;
+
+      // Async initialization
+      async function initApp() {
+        await loadCustomEvents();
+        await loadOverrides();
+        // Assign states to custom events loaded from Supabase
+        EVENTS.forEach((e) => {
+          if (e.isCustom && e.state === undefined) {
+            const loc = e.location || "";
+            const parts = loc.split(",").map((s) => s.trim());
+            const last = parts[parts.length - 1];
+            e.state = STATE_ABBR.includes(last) ? last : null;
+          }
+        });
+        computeAllROI();
+        render();
+        document.getElementById("stat-top").textContent = EVENTS.filter(
+          (e) => e.score >= 9,
+        ).length;
+        document.getElementById("stat-total").textContent = EVENTS.length;
+      }
+      initApp();
     </script>
   </body>
 </html>
