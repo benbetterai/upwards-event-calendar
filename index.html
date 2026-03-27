@@ -2027,10 +2027,16 @@
   <body>
     <div class="header">
       <div class="header-inner">
-        <div class="brand">
+        <a
+          href="https://upwards.com"
+          target="_blank"
+          rel="noopener"
+          class="brand"
+          style="text-decoration: none; color: inherit"
+        >
           <div class="brand-logo">U</div>
           <div class="brand-name">Upwards</div>
-        </div>
+        </a>
         <h1>Event Intelligence <span>Calendar 2026-2027</span></h1>
         <p class="header-sub">372 Events Across 12 Shift-Worker Industries</p>
       </div>
@@ -4321,11 +4327,19 @@
         localStorage.getItem("useSmartDefaults") ?? "true",
       );
 
-      function getSmartDefaults(attendees, gp) {
+      // Team member home cities — if event is in a home city, travel cost = $0
+      const TEAM_HOME_CITIES = {
+        "San Diego, CA": true,
+        // Add more cities where team members live:
+        // "Austin, TX": true,
+        // "Chicago, IL": true,
+      };
+
+      function getSmartDefaults(attendees, gp, location) {
         const p = { ...gp };
         if (attendees <= 500) {
           p.numReps = 1;
-          p.sponsorshipCost = 2000;
+          p.sponsorshipCost = 5000;
           p.eventDays = 2;
         } else if (attendees <= 2000) {
           p.numReps = 2;
@@ -4339,6 +4353,10 @@
           p.numReps = 3;
           p.sponsorshipCost = 15000;
           p.eventDays = 3;
+        }
+        // Zero travel cost if event is in a team member's home city
+        if (location && TEAM_HOME_CITIES[location]) {
+          p.travelCostPerRep = 0;
         }
         return p;
       }
@@ -4395,10 +4413,10 @@
           .eq("event_id", eventId);
       }
 
-      function getEventParams(eventId, attendees) {
+      function getEventParams(eventId, attendees, location) {
         const base =
           useSmartDefaults && attendees != null
-            ? getSmartDefaults(attendees, globalParams)
+            ? getSmartDefaults(attendees, globalParams, location)
             : globalParams;
         const overrides = eventOverrides[eventId] || {};
         return { ...base, ...overrides };
@@ -4436,8 +4454,8 @@
         };
       }
 
-      function getEventROIParams(eventId, attendees) {
-        const p = getEventParams(eventId, attendees);
+      function getEventROIParams(eventId, attendees, location) {
+        const p = getEventParams(eventId, attendees, location);
         return {
           sponsorshipCost: p.sponsorshipCost,
           numReps: p.numReps,
@@ -4517,7 +4535,7 @@
       function computeAllROI() {
         EVENTS.forEach((e) => {
           const attendees = parseAttendees(e.attendance);
-          const params = getEventROIParams(e.id, attendees);
+          const params = getEventROIParams(e.id, attendees, e.location);
           e.roi = computeROI(attendees, params);
         });
       }
@@ -4745,7 +4763,11 @@
 
           // Inline override panel
           if (openOverrideId === e.id) {
-            const ep = getEventParams(e.id, parseAttendees(e.attendance));
+            const ep = getEventParams(
+              e.id,
+              parseAttendees(e.attendance),
+              e.location,
+            );
             tableHTML += `<tr class="${rowClass}"><td colspan="15" style="padding:0">
               <div class="override-panel">
                 <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Override Parameters for ${e.name}</div>
@@ -5626,7 +5648,11 @@
               : '<span class="verdict-nogo" style="font-size:14px;padding:6px 16px;">NO-GO</span>';
           const fmtDollar = (v) => "$" + Math.round(v).toLocaleString();
           const fmtPct = (v) => (v * 100).toFixed(1) + "%";
-          const ep = getEventParams(e.id, parseAttendees(e.attendance));
+          const ep = getEventParams(
+            e.id,
+            parseAttendees(e.attendance),
+            e.location,
+          );
           const hasOvr = hasOverrides(e.id);
           const ovrBadge = hasOvr
             ? '<span class="modal-override-badge">Custom overrides active</span>'
