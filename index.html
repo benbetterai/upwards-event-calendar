@@ -1299,6 +1299,25 @@
           <button class="view-btn active" data-view="table">Table</button>
         </div>
         <div class="results-count" id="results-count"></div>
+        <button
+          onclick="exportCSV()"
+          style="
+            background: var(--teal);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+          "
+        >
+          &#x2B07; Export CSV
+        </button>
       </div>
     </div>
 
@@ -2949,15 +2968,37 @@
       <div class="events-grid">`;
 
           monthEvents.forEach((e) => {
+            const roi = e.roi || {};
+            const verdictHtml =
+              roi.verdict === "GO"
+                ? `<span class="verdict-go" style="font-size:11px;padding:2px 8px">GO</span>`
+                : `<span class="verdict-nogo" style="font-size:11px;padding:2px 8px">NO-GO</span>`;
+            const roiPct =
+              roi.projectedROI != null
+                ? (roi.projectedROI * 100).toFixed(0) + "%"
+                : "-";
+            const roiColor = roi.projectedROI >= 0 ? "#16a34a" : "#dc2626";
+            const expRev =
+              roi.expectedRevenue != null
+                ? "$" + Math.round(roi.expectedRevenue).toLocaleString()
+                : "-";
             html += `<div class="event-card" onclick="showEventModal(${e.id})">
         <div class="event-card-top">
           <div class="event-name">${e.name}</div>
-          <div class="icp-badge ${icpClass(e.score)}">${e.score}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            ${verdictHtml}
+            <div class="icp-badge ${icpClass(e.score)}">${e.score}</div>
+          </div>
         </div>
         <div class="event-meta">
           <div class="meta-row"><span class="meta-icon">&#128197;</span> ${e.dates}</div>
           <div class="meta-row"><span class="meta-icon">&#128205;</span> ${e.location}</div>
           <div class="meta-row"><span class="meta-icon">&#128101;</span> ${e.attendance} expected</div>
+        </div>
+        <div style="display:flex;gap:12px;margin:6px 0;font-size:12px;color:var(--gray-600)">
+          <span>ROI: <strong style="color:${roiColor}">${roiPct}</strong></span>
+          <span>Revenue: <strong>${expRev}</strong></span>
+          <span>Deals: <strong>${roi.expectedDeals != null ? roi.expectedDeals.toFixed(1) : "-"}</strong></span>
         </div>
         <div class="event-tags">
           <span class="industry-pill" style="background:${e.color}">${e.industry}</span>
@@ -3501,6 +3542,88 @@
           render();
         });
       });
+
+      // CSV Export
+      function exportCSV() {
+        const filtered = getFiltered();
+        const headers = [
+          "Event",
+          "Dates",
+          "Month",
+          "Location",
+          "Industry",
+          "ICP Score",
+          "Attendance",
+          "Verdict",
+          "Assessment",
+          "Total Cost",
+          "Conversations Needed",
+          "Penetration Rate",
+          "Rep Capacity",
+          "Capacity Gap",
+          "Expected Deals",
+          "Expected Revenue",
+          "Projected ROI",
+          "Why It Matters",
+          "Event URL",
+          "Exhibitor URL",
+        ];
+        const rows = filtered.map((e) => {
+          const roi = e.roi || {};
+          return [
+            e.name,
+            e.dates,
+            e.month,
+            e.location,
+            e.industry,
+            e.score,
+            e.attendance,
+            roi.verdict || "",
+            roi.assessment || "",
+            roi.totalCost != null ? roi.totalCost : "",
+            roi.conversationsNeeded != null ? roi.conversationsNeeded : "",
+            roi.penetrationRate != null
+              ? (roi.penetrationRate * 100).toFixed(1) + "%"
+              : "",
+            roi.repCapacity != null ? roi.repCapacity : "",
+            roi.capacityGap != null ? roi.capacityGap : "",
+            roi.expectedDeals != null ? roi.expectedDeals.toFixed(2) : "",
+            roi.expectedRevenue != null ? Math.round(roi.expectedRevenue) : "",
+            roi.projectedROI != null
+              ? (roi.projectedROI * 100).toFixed(1) + "%"
+              : "",
+            '"' + (e.why || "").replace(/"/g, '""') + '"',
+            e.url || "",
+            e.exhibitor_url || "",
+          ];
+        });
+        const csvContent = [
+          headers.join(","),
+          ...rows.map((r) =>
+            r
+              .map((v) => {
+                const s = String(v);
+                return s.includes(",") || s.includes('"') || s.includes("\n")
+                  ? '"' + s.replace(/"/g, '""') + '"'
+                  : s;
+              })
+              .join(","),
+          ),
+        ].join("\n");
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download =
+          "upwards-event-intelligence-" +
+          new Date().toISOString().slice(0, 10) +
+          ".csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      window.exportCSV = exportCSV;
 
       // Initial render
       render();
