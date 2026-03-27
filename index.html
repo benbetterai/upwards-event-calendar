@@ -69,6 +69,190 @@
         -webkit-font-smoothing: antialiased;
       }
 
+      /* Vote elements */
+      .vote-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 2px 4px;
+        transition: transform 0.15s;
+        color: var(--gray-400);
+      }
+      .vote-btn:hover {
+        transform: scale(1.2);
+      }
+      .vote-btn.voted {
+        color: var(--teal);
+      }
+      .vote-count {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-500);
+        margin-left: 2px;
+      }
+      .vote-names {
+        font-size: 11px;
+        color: var(--gray-400);
+        margin-left: 4px;
+      }
+      .vote-tooltip {
+        position: relative;
+        display: inline-block;
+      }
+      .vote-tooltip .vote-tooltip-text {
+        visibility: hidden;
+        background: var(--navy);
+        color: white;
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        z-index: 100;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+      .vote-tooltip:hover .vote-tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+      .nav-user-pill {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.1);
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-left: 12px;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .nav-user-pill:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.8);
+      }
+      /* Name prompt modal */
+      .name-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.8);
+        z-index: 20000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .name-modal-card {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      }
+      .name-modal-title {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--navy);
+        margin-bottom: 8px;
+      }
+      .name-modal-sub {
+        font-size: 14px;
+        color: var(--gray-500);
+        margin-bottom: 24px;
+      }
+      .name-modal-input {
+        font-family: "Inter", sans-serif;
+        font-size: 18px;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: 8px;
+        width: 100%;
+        text-align: center;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .name-modal-input:focus {
+        border-color: var(--teal);
+      }
+      .name-modal-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 12px 32px;
+        background: var(--teal);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 16px;
+        width: 100%;
+        transition: background 0.15s;
+      }
+      .name-modal-btn:hover {
+        background: var(--teal-light);
+      }
+      /* Modal vote section */
+      .modal-vote-section {
+        padding: 16px 0;
+        border-top: 1px solid var(--gray-200);
+        margin-top: 16px;
+      }
+      .modal-vote-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 2px solid var(--gray-200);
+        background: var(--white);
+        color: var(--gray-600);
+        width: 100%;
+        justify-content: center;
+      }
+      .modal-vote-btn:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+      }
+      .modal-vote-btn.voted {
+        border-color: var(--teal);
+        background: var(--teal-bg);
+        color: var(--teal);
+      }
+      .modal-voters-list {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--gray-500);
+      }
+      .modal-voter-chip {
+        display: inline-block;
+        background: var(--gray-100);
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 2px 4px 2px 0;
+      }
+      .calendar-vote-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 6px;
+        font-size: 12px;
+      }
+
       /* Header */
       .header {
         background: linear-gradient(
@@ -1905,6 +2089,14 @@
           </select>
         </div>
         <div class="filter-group">
+          <span class="filter-label">Votes</span>
+          <select id="filter-votes">
+            <option value="all">All Events</option>
+            <option value="voted">Voted Only</option>
+            <option value="mine">My Votes</option>
+          </select>
+        </div>
+        <div class="filter-group">
           <span class="filter-label">Search</span>
           <input
             type="text"
@@ -1941,6 +2133,12 @@
         <button onclick="showAddEventModal()" class="nav-add-btn">
           + Add Event
         </button>
+        <span
+          class="nav-user-pill"
+          id="nav-user-pill"
+          onclick="showNamePrompt()"
+          style="display: none"
+        ></span>
       </div>
     </nav>
 
@@ -1970,6 +2168,136 @@
         SUPABASE_URL,
         SUPABASE_KEY,
       );
+
+      // Team voting system
+      let allVotes = {}; // { eventId: ['Greg', 'Nikki'] }
+      let currentUser = localStorage.getItem("teamMemberName") || "";
+
+      async function loadVotes() {
+        const { data, error } = await supabaseClient
+          .from("event_votes")
+          .select("event_id, member_name");
+        if (error) {
+          console.error("loadVotes error:", error);
+          return;
+        }
+        allVotes = {};
+        data.forEach((v) => {
+          if (!allVotes[v.event_id]) allVotes[v.event_id] = [];
+          allVotes[v.event_id].push(v.member_name);
+        });
+      }
+
+      async function toggleVote(eventId) {
+        if (!currentUser) return;
+        const voters = allVotes[eventId] || [];
+        const hasVoted = voters.includes(currentUser);
+
+        if (hasVoted) {
+          await supabaseClient
+            .from("event_votes")
+            .delete()
+            .match({ event_id: eventId, member_name: currentUser });
+          allVotes[eventId] = voters.filter((n) => n !== currentUser);
+        } else {
+          await supabaseClient
+            .from("event_votes")
+            .insert({ event_id: eventId, member_name: currentUser });
+          if (!allVotes[eventId]) allVotes[eventId] = [];
+          allVotes[eventId].push(currentUser);
+        }
+        render();
+        // Re-render modal if open
+        const modal = document.getElementById("event-modal");
+        if (modal) {
+          modal.remove();
+          showEventModal(eventId);
+        }
+      }
+      window.toggleVote = toggleVote;
+
+      function getVoteHTML(eventId, style) {
+        const voters = allVotes[eventId] || [];
+        const hasVoted = currentUser && voters.includes(currentUser);
+        const starClass = hasVoted ? "voted" : "";
+        const star = hasVoted ? "\u2605" : "\u2606";
+        const count = voters.length;
+
+        if (style === "table") {
+          const tooltipNames =
+            voters.length > 0 ? voters.join(", ") : "No votes";
+          return `<div class="vote-tooltip" style="display:inline-flex;align-items:center;gap:2px;" onclick="event.stopPropagation()">
+            <button class="vote-btn ${starClass}" onclick="event.stopPropagation();toggleVote(${eventId})">${star}</button>
+            <span class="vote-count">${count || ""}</span>
+            <span class="vote-tooltip-text">${tooltipNames}</span>
+          </div>`;
+        }
+
+        if (style === "calendar") {
+          const names =
+            voters.slice(0, 2).join(", ") +
+            (voters.length > 2 ? " +" + (voters.length - 2) : "");
+          return `<div class="calendar-vote-row" onclick="event.stopPropagation()">
+            <button class="vote-btn ${starClass}" onclick="event.stopPropagation();toggleVote(${eventId})">${star}</button>
+            <span class="vote-count">${count || ""}</span>
+            ${voters.length > 0 ? '<span class="vote-names">' + names + "</span>" : ""}
+          </div>`;
+        }
+
+        return "";
+      }
+
+      function showNamePrompt() {
+        const existing = document.getElementById("name-modal-overlay");
+        if (existing) existing.remove();
+
+        const overlay = document.createElement("div");
+        overlay.id = "name-modal-overlay";
+        overlay.className = "name-modal-overlay";
+        overlay.innerHTML = `
+          <div class="name-modal-card">
+            <div class="name-modal-title">Welcome to Event Intelligence</div>
+            <div class="name-modal-sub">Enter your name so the team can see your votes</div>
+            <input type="text" class="name-modal-input" id="name-modal-input" placeholder="e.g., Greg" value="${currentUser}" />
+            <button class="name-modal-btn" id="name-modal-submit">Continue</button>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const input = document.getElementById("name-modal-input");
+        const btn = document.getElementById("name-modal-submit");
+        input.focus();
+
+        async function submitName() {
+          const name = input.value.trim();
+          if (!name) {
+            input.style.borderColor = "#ef4444";
+            return;
+          }
+          currentUser = name;
+          localStorage.setItem("teamMemberName", name);
+          await supabaseClient
+            .from("team_members")
+            .upsert({ name }, { onConflict: "name" });
+          overlay.remove();
+          updateUserPill();
+          render();
+        }
+
+        btn.addEventListener("click", submitName);
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") submitName();
+        });
+      }
+      window.showNamePrompt = showNamePrompt;
+
+      function updateUserPill() {
+        const pill = document.getElementById("nav-user-pill");
+        if (pill && currentUser) {
+          pill.textContent = "\uD83D\uDC64 " + currentUser;
+          pill.style.display = "";
+        }
+      }
 
       const EVENTS = [
         // Cross-Industry
@@ -4746,12 +5074,13 @@
         const sc = document.getElementById("filter-score").value;
         const mo = document.getElementById("filter-month").value;
         const vd = document.getElementById("filter-verdict").value;
+        const voteFilter = document.getElementById("filter-votes").value;
         const q = document
           .getElementById("filter-search")
           .value.toLowerCase()
           .trim();
 
-        return EVENTS.filter((e) => {
+        let filtered = EVENTS.filter((e) => {
           if (ind !== "all" && e.industry !== ind) return false;
           if (sc !== "all" && e.score < parseInt(sc)) return false;
           if (mo !== "all" && e.month !== mo) return false;
@@ -4769,6 +5098,16 @@
             return false;
           return true;
         });
+
+        if (voteFilter === "voted") {
+          filtered = filtered.filter((e) => (allVotes[e.id] || []).length > 0);
+        } else if (voteFilter === "mine") {
+          filtered = filtered.filter((e) =>
+            (allVotes[e.id] || []).includes(currentUser),
+          );
+        }
+
+        return filtered;
       }
 
       function icpClass(score) {
@@ -4849,6 +5188,7 @@
         <div class="event-tags">
           <span class="industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}
         </div>
+        ${getVoteHTML(e.id, "calendar")}
         <div class="expand-hint">Click for details</div>
         <div class="event-why">${e.why}</div>
       </div>`;
@@ -4873,8 +5213,14 @@
           if (a.roi && b.roi && a.roi.verdict !== b.roi.verdict) {
             return a.roi.verdict === "GO" ? -1 : 1;
           }
-          let av = a[sortCol],
+          let av, bv;
+          if (sortCol === "votes") {
+            av = (allVotes[a.id] || []).length;
+            bv = (allVotes[b.id] || []).length;
+          } else {
+            av = a[sortCol];
             bv = b[sortCol];
+          }
           if (typeof av === "string") av = av.toLowerCase();
           if (typeof bv === "string") bv = bv.toLowerCase();
           if (av < bv) return -1 * sortDir;
@@ -4893,6 +5239,7 @@
           { key: "projectedROI", label: "Proj. ROI" },
           { key: "expectedRevenue", label: "Exp. Revenue" },
           { key: "assessment", label: "Assessment" },
+          { key: "votes", label: "Votes" },
         ];
 
         let html = `<table class="events-table"><thead><tr>`;
@@ -4936,6 +5283,7 @@
       <td data-label="Proj. ROI" style="font-weight:700;${roiColor}">${roiPct}</td>
       <td data-label="Revenue" style="font-weight:600">${expRev}</td>
       <td data-label="Assessment" style="font-size:12px;color:var(--gray-500);max-width:180px">${roi.assessment || "-"}</td>
+      <td data-label="Votes">${getVoteHTML(e.id, "table")}</td>
     </tr>`;
         });
 
@@ -5313,6 +5661,18 @@
             </div>`;
         }
 
+        // Vote section for modal
+        const voters = allVotes[e.id] || [];
+        const hasVoted = currentUser && voters.includes(currentUser);
+        const voteHTML = `
+          <div class="modal-vote-section">
+            <button class="modal-vote-btn ${hasVoted ? "voted" : ""}" onclick="toggleVote(${e.id})">
+              ${hasVoted ? "\u2605 Remove Vote" : "\u2606 Vote for This Event"}
+            </button>
+            ${voters.length > 0 ? `<div class="modal-voters-list">${voters.map((n) => `<span class="modal-voter-chip">${n}</span>`).join("")}</div>` : '<div class="modal-voters-list" style="color:var(--gray-400)">No votes yet</div>'}
+          </div>
+        `;
+
         const backdrop = document.createElement("div");
         backdrop.id = "event-modal";
         backdrop.className = "modal-backdrop";
@@ -5349,6 +5709,7 @@
               <div class="modal-right">
                 <div class="modal-body">
                   ${roiHTML}
+                  ${voteHTML}
                 </div>
               </div>
             </div>
@@ -5415,6 +5776,9 @@
         .addEventListener("change", render);
       document
         .getElementById("filter-verdict")
+        .addEventListener("change", render);
+      document
+        .getElementById("filter-votes")
         .addEventListener("change", render);
       document
         .getElementById("filter-search")
@@ -5633,6 +5997,7 @@
       async function initApp() {
         await loadCustomEvents();
         await loadOverrides();
+        await loadVotes();
         // Assign states to custom events loaded from Supabase
         EVENTS.forEach((e) => {
           if (e.isCustom && e.state === undefined) {
@@ -5643,6 +6008,13 @@
           }
         });
         computeAllROI();
+
+        if (!currentUser) {
+          showNamePrompt();
+        } else {
+          updateUserPill();
+        }
+
         render();
         document.getElementById("stat-top").textContent = EVENTS.filter(
           (e) => e.score >= 9,
