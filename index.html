@@ -8,6 +8,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
       *,
       *::before,
@@ -794,80 +799,51 @@
         margin: 24px auto;
         padding: 0 24px;
         display: flex;
-        gap: 24px;
-        min-height: 600px;
+        gap: 0;
+        height: 700px;
       }
-      .map-svg-wrap {
-        flex: 0 0 70%;
-        background: var(--white);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow);
-        padding: 24px;
-        position: relative;
-      }
-      .map-svg-wrap svg {
-        width: 100%;
-        height: auto;
-      }
-      .map-svg-wrap svg path.state-path {
-        fill: var(--gray-200);
-        stroke: #fff;
-        stroke-width: 1.5;
-        cursor: pointer;
-        transition:
-          fill 0.15s,
-          opacity 0.15s;
-      }
-      .map-svg-wrap svg path.state-path:hover {
-        opacity: 0.8;
-        stroke: var(--gray-700);
-        stroke-width: 2;
-      }
-      .map-svg-wrap svg path.state-path.selected {
-        stroke: var(--navy);
-        stroke-width: 2.5;
+      .map-leaflet-wrap {
+        flex: 1;
+        min-width: 0;
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        overflow: hidden;
       }
       .map-panel {
-        flex: 0 0 30%;
+        width: 340px;
         background: var(--white);
-        border-radius: var(--radius-lg);
+        border-left: 1px solid var(--gray-200);
+        overflow-y: auto;
+        padding: 20px;
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
         box-shadow: var(--shadow);
-        display: flex;
-        flex-direction: column;
-        max-height: 640px;
       }
       .map-panel-header {
-        padding: 20px 20px 12px;
-        border-bottom: 1px solid var(--gray-200);
         font-weight: 700;
         font-size: 1.05rem;
         color: var(--navy);
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--gray-200);
       }
-      .map-panel-body {
-        padding: 12px 20px 20px;
-        overflow-y: auto;
-        flex: 1;
-      }
-      .map-state-row {
+      .map-city-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 0;
+        padding: 8px 6px;
         border-bottom: 1px solid var(--gray-100);
         cursor: pointer;
         transition: background 0.1s;
         border-radius: 4px;
-        padding-left: 6px;
-        padding-right: 6px;
       }
-      .map-state-row:hover {
+      .map-city-row:hover {
         background: var(--teal-bg);
       }
-      .map-state-name {
+      .map-city-name {
         font-weight: 500;
         color: var(--gray-700);
+        font-size: 0.9rem;
       }
-      .map-state-count {
+      .map-city-count {
         background: var(--teal);
         color: white;
         font-size: 0.75rem;
@@ -886,6 +862,10 @@
           border-color 0.15s,
           box-shadow 0.15s;
         animation: fadeIn 0.2s ease both;
+      }
+      .map-event-card:hover {
+        border-color: var(--teal);
+        box-shadow: var(--shadow-md);
       }
       .map-event-card .mec-name {
         font-weight: 600;
@@ -913,24 +893,6 @@
         height: 24px;
         line-height: 24px;
       }
-      .map-tooltip {
-        position: fixed;
-        pointer-events: none;
-        background: var(--navy);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 0.82rem;
-        font-weight: 500;
-        z-index: 9999;
-        white-space: nowrap;
-        box-shadow: var(--shadow-md);
-        opacity: 0;
-        transition: opacity 0.12s;
-      }
-      .map-tooltip.visible {
-        opacity: 1;
-      }
       .map-back-btn {
         display: inline-flex;
         align-items: center;
@@ -947,18 +909,198 @@
       .map-back-btn:hover {
         text-decoration: underline;
       }
+      .map-legend {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        padding: 12px 0 0;
+        font-size: 0.78rem;
+        color: var(--gray-500);
+        flex-wrap: wrap;
+        border-top: 1px solid var(--gray-100);
+        margin-top: 12px;
+      }
+      .map-legend span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .map-legend-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+      }
       @media (max-width: 900px) {
         .map-container {
           flex-direction: column;
+          height: auto;
         }
-        .map-svg-wrap,
+        .map-leaflet-wrap {
+          height: 400px;
+          border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
         .map-panel {
-          flex: none;
           width: 100%;
-        }
-        .map-panel {
           max-height: 400px;
+          border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+          border-left: none;
+          border-top: 1px solid var(--gray-200);
         }
+      }
+
+      /* ROI Calculator */
+      .roi-settings-wrap {
+        max-width: 1280px;
+        margin: 16px auto 0;
+        padding: 0 24px;
+      }
+      .roi-toggle-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 16px;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--gray-600);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .roi-toggle-btn:hover {
+        background: var(--gray-50);
+        border-color: var(--teal);
+        color: var(--teal);
+      }
+      .roi-toggle-btn.active {
+        background: var(--teal-bg);
+        border-color: var(--teal);
+        color: var(--teal);
+      }
+      .roi-settings-panel {
+        display: none;
+        background: var(--gray-50);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin-top: 12px;
+      }
+      .roi-settings-panel.open {
+        display: block;
+      }
+      .roi-settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+      }
+      .roi-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .roi-field label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .roi-field input {
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        padding: 8px 12px;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--gray-700);
+        outline: none;
+        width: 100%;
+        transition: border-color 0.15s;
+      }
+      .roi-field input:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+      }
+      .roi-recalc-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 24px;
+        background: var(--teal);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        margin-top: 16px;
+        transition: background 0.15s;
+      }
+      .roi-recalc-btn:hover {
+        background: var(--teal-light);
+      }
+      .verdict-go {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #16a34a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .verdict-nogo {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #fef2f2;
+        color: #dc2626;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .roi-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--gray-200);
+      }
+      .roi-section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--teal);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+      }
+      .roi-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .roi-grid-item {
+        padding: 10px 12px;
+        background: var(--gray-50);
+        border-radius: var(--radius);
+        border: 1px solid var(--gray-100);
+      }
+      .roi-grid-item .rgi-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--gray-400);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .roi-grid-item .rgi-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-top: 2px;
+      }
+      .rgi-value.favorable {
+        color: #16a34a;
+      }
+      .rgi-value.unfavorable {
+        color: #dc2626;
       }
     </style>
   </head>
@@ -995,6 +1137,122 @@
       </div>
     </div>
 
+    <div class="roi-settings-wrap">
+      <button
+        class="roi-toggle-btn"
+        id="roi-toggle"
+        onclick="
+          document.getElementById('roi-panel').classList.toggle('open');
+          this.classList.toggle('active');
+        "
+      >
+        ROI Calculator &#9881;
+      </button>
+      <div class="roi-settings-panel" id="roi-panel">
+        <div class="roi-settings-grid">
+          <div class="roi-field">
+            <label>Event Sponsorship Cost</label
+            ><input
+              type="number"
+              id="roi-sponsorship"
+              value="5000"
+              min="0"
+              step="500"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Number of Reps</label
+            ><input type="number" id="roi-reps" value="2" min="1" step="1" />
+          </div>
+          <div class="roi-field">
+            <label>Travel Cost per Rep</label
+            ><input
+              type="number"
+              id="roi-travel"
+              value="1200"
+              min="0"
+              step="100"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Attendee Show Rate (%)</label
+            ><input
+              type="number"
+              id="roi-showrate"
+              value="90"
+              min="0"
+              max="100"
+              step="1"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Convo &rarr; Meeting Rate (%)</label
+            ><input
+              type="number"
+              id="roi-convorate"
+              value="25"
+              min="0"
+              max="100"
+              step="1"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Meeting Show Rate (%)</label
+            ><input
+              type="number"
+              id="roi-meetingshow"
+              value="70"
+              min="0"
+              max="100"
+              step="1"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Close Rate (%)</label
+            ><input
+              type="number"
+              id="roi-closerate"
+              value="5.7"
+              min="0"
+              max="100"
+              step="0.1"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Median Contract Value</label
+            ><input
+              type="number"
+              id="roi-contract"
+              value="18000"
+              min="0"
+              step="1000"
+            />
+          </div>
+          <div class="roi-field">
+            <label>Convos per Rep per Day</label
+            ><input type="number" id="roi-convos" value="25" min="1" step="1" />
+          </div>
+          <div class="roi-field">
+            <label>Event Days</label
+            ><input type="number" id="roi-days" value="2" min="1" step="1" />
+          </div>
+          <div class="roi-field">
+            <label>Expected Value per Meeting</label
+            ><input
+              type="number"
+              id="roi-meetingvalue"
+              value="700"
+              min="0"
+              step="50"
+            />
+          </div>
+        </div>
+        <button class="roi-recalc-btn" onclick="recalculateROI()">
+          Recalculate
+        </button>
+      </div>
+    </div>
+
     <div class="controls">
       <div class="controls-inner">
         <div class="filter-group">
@@ -1016,6 +1274,14 @@
           <span class="filter-label">Month</span>
           <select id="filter-month">
             <option value="all">All Months</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Verdict</span>
+          <select id="filter-verdict">
+            <option value="all">All</option>
+            <option value="GO">GO Only</option>
+            <option value="NO-GO">NO-GO Only</option>
           </select>
         </div>
         <div class="filter-group">
@@ -1041,7 +1307,10 @@
       id="calendar-view"
       style="display: none"
     ></div>
-    <div class="map-container" id="map-view" style="display: none"></div>
+    <div class="map-container" id="map-view" style="display: none">
+      <div class="map-leaflet-wrap" id="leaflet-map"></div>
+      <div class="map-panel" id="map-panel"></div>
+    </div>
     <div class="table-container" id="table-view"></div>
 
     <div class="footer">
@@ -2492,6 +2761,124 @@
         }
       });
 
+      // ROI Calculator
+      function parseAttendees(att) {
+        if (!att) return 0;
+        let s = String(att).replace(/,/g, "").replace(/\+/g, "").trim();
+        // For ranges like "2000-3000", use lower bound
+        if (s.includes("-")) {
+          s = s.split("-")[0].trim();
+        }
+        return parseInt(s) || 0;
+      }
+
+      function getROIParams() {
+        return {
+          sponsorshipCost:
+            parseFloat(document.getElementById("roi-sponsorship").value) || 0,
+          numReps: parseInt(document.getElementById("roi-reps").value) || 1,
+          travelCostPerRep:
+            parseFloat(document.getElementById("roi-travel").value) || 0,
+          attendeeShowRate:
+            (parseFloat(document.getElementById("roi-showrate").value) || 0) /
+            100,
+          convoToMeetingRate:
+            (parseFloat(document.getElementById("roi-convorate").value) || 0) /
+            100,
+          meetingShowRate:
+            (parseFloat(document.getElementById("roi-meetingshow").value) ||
+              0) / 100,
+          closeRate:
+            (parseFloat(document.getElementById("roi-closerate").value) || 0) /
+            100,
+          medianContractValue:
+            parseFloat(document.getElementById("roi-contract").value) || 0,
+          convosPerRepPerDay:
+            parseInt(document.getElementById("roi-convos").value) || 1,
+          eventDays: parseInt(document.getElementById("roi-days").value) || 1,
+          expectedValuePerMeeting:
+            parseFloat(document.getElementById("roi-meetingvalue").value) || 1,
+        };
+      }
+
+      function computeROI(attendees, params) {
+        const totalCost =
+          params.sponsorshipCost + params.numReps * params.travelCostPerRep;
+        const meetingsToBreakEven = Math.ceil(
+          totalCost / params.expectedValuePerMeeting,
+        );
+        const meetingsHeldNeeded = meetingsToBreakEven;
+        const onsiteYesesNeeded =
+          params.meetingShowRate > 0
+            ? Math.ceil(meetingsHeldNeeded / params.meetingShowRate)
+            : Infinity;
+        const conversationsNeeded =
+          params.convoToMeetingRate > 0
+            ? Math.ceil(onsiteYesesNeeded / params.convoToMeetingRate)
+            : Infinity;
+        const actualAttendees = Math.round(attendees * params.attendeeShowRate);
+        const penetrationRate =
+          actualAttendees > 0
+            ? conversationsNeeded / actualAttendees
+            : Infinity;
+        const repCapacity =
+          params.numReps * params.convosPerRepPerDay * params.eventDays;
+        const capacityGap = repCapacity - conversationsNeeded;
+
+        let verdict, assessment;
+        if (repCapacity >= conversationsNeeded && penetrationRate <= 0.3) {
+          verdict = "GO";
+          assessment = "Feasible \u2014 capacity and penetration both viable";
+        } else if (repCapacity < conversationsNeeded) {
+          verdict = "NO-GO";
+          assessment = "Not enough rep capacity";
+        } else if (penetrationRate > 0.5) {
+          verdict = "NO-GO";
+          assessment = "Unrealistic without speaking slot";
+        } else {
+          verdict = "NO-GO";
+          assessment =
+            "Borderline \u2014 consider speaking slot or pre-booking";
+        }
+
+        const expectedDeals = meetingsHeldNeeded * params.closeRate;
+        const expectedRevenue = expectedDeals * params.medianContractValue;
+        const projectedROI =
+          totalCost > 0 ? (expectedRevenue - totalCost) / totalCost : 0;
+
+        return {
+          verdict,
+          assessment,
+          totalCost,
+          meetingsToBreakEven,
+          conversationsNeeded,
+          actualAttendees,
+          penetrationRate,
+          repCapacity,
+          capacityGap,
+          expectedDeals,
+          expectedRevenue,
+          projectedROI,
+        };
+      }
+
+      function computeAllROI() {
+        const params = getROIParams();
+        EVENTS.forEach((e) => {
+          const attendees = parseAttendees(e.attendance);
+          e.roi = computeROI(attendees, params);
+        });
+      }
+
+      function recalculateROI() {
+        computeAllROI();
+        render();
+      }
+      window.recalculateROI = recalculateROI;
+
+      // Compute initial ROI
+      computeAllROI();
+
       // State
       let currentView = "table";
       let sortCol = "score";
@@ -2501,6 +2888,7 @@
         const ind = document.getElementById("filter-industry").value;
         const sc = document.getElementById("filter-score").value;
         const mo = document.getElementById("filter-month").value;
+        const vd = document.getElementById("filter-verdict").value;
         const q = document
           .getElementById("filter-search")
           .value.toLowerCase()
@@ -2510,6 +2898,7 @@
           if (ind !== "all" && e.industry !== ind) return false;
           if (sc !== "all" && e.score < parseInt(sc)) return false;
           if (mo !== "all" && e.month !== mo) return false;
+          if (vd !== "all" && e.roi && e.roi.verdict !== vd) return false;
           if (
             q &&
             !(
@@ -2591,8 +2980,12 @@
           return;
         }
 
-        // Sort
+        // Sort: GO events first by default, then by sortCol
         const sorted = [...events].sort((a, b) => {
+          // Primary: GO events first
+          if (a.roi && b.roi && a.roi.verdict !== b.roi.verdict) {
+            return a.roi.verdict === "GO" ? -1 : 1;
+          }
           let av = a[sortCol],
             bv = b[sortCol];
           if (typeof av === "string") av = av.toLowerCase();
@@ -2609,6 +3002,10 @@
           { key: "industry", label: "Industry" },
           { key: "score", label: "ICP Score" },
           { key: "attendance", label: "Attendance" },
+          { key: "verdict", label: "Verdict" },
+          { key: "projectedROI", label: "Proj. ROI" },
+          { key: "expectedRevenue", label: "Exp. Revenue" },
+          { key: "assessment", label: "Assessment" },
         ];
 
         let html = `<table class="events-table"><thead><tr>`;
@@ -2625,6 +3022,22 @@
         html += `</tr></thead><tbody>`;
 
         sorted.forEach((e, i) => {
+          const roi = e.roi || {};
+          const verdictBadge =
+            roi.verdict === "GO"
+              ? `<span class="verdict-go">GO</span>`
+              : `<span class="verdict-nogo">NO-GO</span>`;
+          const roiPct =
+            roi.projectedROI != null
+              ? (roi.projectedROI * 100).toFixed(0) + "%"
+              : "-";
+          const roiColor =
+            roi.projectedROI >= 0 ? "color:#16a34a" : "color:#dc2626";
+          const expRev =
+            roi.expectedRevenue != null
+              ? "$" + Math.round(roi.expectedRevenue).toLocaleString()
+              : "-";
+
           html += `<tr style="animation-delay:${Math.min(i * 20, 500)}ms" onclick="showEventModal(${e.id})">
       <td class="table-event-name">${e.name}</td>
       <td>${e.dates}</td>
@@ -2632,6 +3045,10 @@
       <td><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span></td>
       <td class="table-icp ${icpClass(e.score)}" style="background:none">${e.score}</td>
       <td>${e.attendance}</td>
+      <td>${verdictBadge}</td>
+      <td style="font-weight:700;${roiColor}">${roiPct}</td>
+      <td style="font-weight:600">${expRev}</td>
+      <td style="font-size:12px;color:var(--gray-500);max-width:180px">${roi.assessment || "-"}</td>
     </tr>`;
         });
 
@@ -2650,9 +3067,108 @@
       }
       window.sortTable = sortTable;
 
-      // US State SVG path data - simplified Albers projection
+      // City coordinates for Leaflet map
+      const CITY_COORDS = {
+        "San Antonio, TX": [29.4241, -98.4936],
+        "Chicago, IL": [41.8781, -87.6298],
+        "Providence, RI": [41.824, -71.4128],
+        "Orlando, FL": [28.5383, -81.3792],
+        "Portland, OR": [45.5155, -122.6789],
+        "Las Vegas, NV": [36.1699, -115.1398],
+        "New Orleans, LA": [29.9511, -90.0715],
+        "Nashville, TN": [36.1627, -86.7816],
+        "Washington, DC": [38.9072, -77.0369],
+        "Minneapolis, MN": [44.9778, -93.265],
+        "San Diego, CA": [32.7157, -117.1611],
+        "Atlanta, GA": [33.749, -84.388],
+        "New York, NY": [40.7128, -74.006],
+        "Phoenix, AZ": [33.4484, -112.074],
+        "Reno, NV": [39.5296, -119.8138],
+        "Milwaukee, WI": [43.0389, -87.9065],
+        "Houston, TX": [29.7604, -95.3698],
+        "Destin, FL": [30.3935, -86.4958],
+        "Round Rock, TX": [30.5083, -97.6789],
+        "Clearwater Beach, FL": [27.978, -82.827],
+        "Salt Lake City, UT": [40.7608, -111.891],
+        "Pittsburgh, PA": [40.4406, -79.9959],
+        "Kansas City, MO": [39.0997, -94.5786],
+        "Arlington, TX": [32.7357, -97.1081],
+        "Indianapolis, IN": [39.7684, -86.1581],
+        "Glendale, AZ": [33.5387, -112.1859],
+        "Iowa City, IA": [41.6611, -91.5302],
+        "Savannah, GA": [32.0809, -81.0912],
+        "Waco, TX": [31.5493, -97.1467],
+        "San Marcos, TX": [29.8833, -97.9414],
+        "Westbrook, CT": [41.2887, -72.4484],
+        "Chandler, AZ": [33.3062, -111.8413],
+        "Omaha, NE": [41.2565, -95.9345],
+        "Overland Park, KS": [38.9822, -94.6708],
+        "Chattanooga, TN": [35.0456, -85.3097],
+        "Hollywood, FL": [26.0112, -80.1495],
+        "Atlantic City, NJ": [39.3643, -74.4229],
+        "Oklahoma City, OK": [35.4676, -97.5164],
+        "Honolulu, HI": [21.3069, -157.8583],
+        "Rogers, AR": [36.332, -94.1185],
+        "Palm Harbor, FL": [28.078, -82.7637],
+        "Hot Springs, AR": [34.5037, -93.0552],
+        "Coralville, IA": [41.6764, -91.5804],
+        "El Paso, TX": [31.7619, -106.485],
+        "St. Louis, MO": [38.627, -90.1994],
+        "Ft. Lauderdale, FL": [26.1224, -80.1373],
+        "Denver, CO": [39.7392, -104.9903],
+        "The Woodlands, TX": [30.1658, -95.4613],
+        "Jekyll Island, GA": [31.0543, -81.4237],
+        "Louisville, KY": [38.2527, -85.7585],
+        "Frisco, TX": [33.1507, -96.8236],
+        "Los Angeles, CA": [34.0522, -118.2437],
+        "Philadelphia, PA": [39.9526, -75.1652],
+        "Tampa, FL": [27.9506, -82.4572],
+        "Long Beach, CA": [33.77, -118.1937],
+        "Columbus, OH": [39.9612, -82.9988],
+        "Anaheim, CA": [33.8366, -117.9143],
+        "Scottsdale, AZ": [33.4942, -111.9261],
+        "San Jose, CA": [37.3382, -121.8863],
+        "Fairborn, OH": [39.8209, -84.0194],
+        "Tucson, AZ": [32.2226, -110.9747],
+        "Charlotte, NC": [35.2271, -80.8431],
+        "Lancaster, PA": [40.0379, -76.3055],
+        "Raleigh, NC": [35.7796, -78.6382],
+        "Augusta, GA": [33.4735, -81.9748],
+        "Myrtle Beach, SC": [33.6891, -78.8867],
+        "Fort Wayne, IN": [41.0793, -85.1394],
+        "Kalamazoo, MI": [42.2917, -85.5872],
+        "Missoula, MT": [46.8721, -113.994],
+        "Monterey, CA": [36.6002, -121.8947],
+        "Temecula, CA": [33.4936, -117.1484],
+        "Lubbock, TX": [33.5779, -101.8552],
+        "Albuquerque, NM": [35.0844, -106.6504],
+        "Mesa, AZ": [33.4152, -111.8315],
+        "Miami, FL": [25.7617, -80.1918],
+        "San Francisco, CA": [37.7749, -122.4194],
+        "Detroit, MI": [42.3314, -83.0458],
+        "Grand Rapids, MI": [42.9634, -85.6681],
+        "Keystone, CO": [39.6069, -105.9519],
+        "Duluth, MN": [46.7867, -92.1005],
+        "Universal City, CA": [34.1381, -118.3534],
+        "Syracuse, NY": [43.0481, -76.1474],
+        "Cleveland, OH": [41.4993, -81.6944],
+        "Boyne Mountain, MI": [45.1639, -84.9308],
+        "Seven Springs, PA": [40.0234, -79.2978],
+        "Lewis Center, OH": [40.1979, -83.0099],
+        "Sacramento, CA": [38.5816, -121.4944],
+        "Greensboro, NC": [36.0726, -79.792],
+        "West Springfield, MA": [42.1085, -72.6412],
+        "Amarillo, TX": [35.222, -101.8313],
+        "Sarasota, FL": [27.3364, -82.5307],
+      };
+
+      // Leaflet map instance (initialized once)
+      let leafletMap = null;
+      let leafletMarkers = null;
+      let mapSelectedCity = null;
+
+      // LEGACY: keep old US_STATE_PATHS empty so no errors
       const US_STATE_PATHS = {
-        WA: "M108,81 L128,76 152,76 172,80 178,88 176,100 170,110 158,114 140,112 120,108 108,100Z",
         OR: "M90,108 L120,108 140,112 158,114 162,126 158,140 150,154 138,160 120,158 106,150 94,140 88,128 88,116Z",
         CA: "M82,152 L94,140 106,150 118,158 120,170 124,186 128,206 130,226 126,248 118,268 108,284 96,296 84,302 76,292 72,278 72,260 74,240 76,220 78,196 80,172Z",
         NV: "M118,158 L138,160 146,178 150,200 146,224 138,246 126,248 128,226 130,206 124,186 120,170Z",
@@ -2702,51 +3218,101 @@
         ME: "M738,94 L754,88 766,96 772,112 770,130 762,146 750,156 738,154 728,144 724,130 724,116 730,104Z",
         FL: "M540,478 L576,478 600,476 620,468 634,460 642,466 648,480 650,498 644,518 632,536 616,548 600,554 584,552 570,544 558,530 548,512 540,496Z",
         AK: "M120,495 L128,490 138,488 150,490 160,487 168,490 175,495 178,502 174,510 170,516 162,518 154,515 148,518 138,517 130,512 124,505 120,500Z",
-        HI: "M233,519 L236,527 240,530 243,527 247,529 250,535 255,537 258,534 256,529 260,526 256,520 252,519 247,516 244,519 240,517 237,519Z",
       };
 
-      let mapSelectedState = null;
-      let mapTooltipEl = null;
+      function markerColor(avgScore) {
+        if (avgScore >= 9) return "#22c55e";
+        if (avgScore >= 7) return "#0d9488";
+        return "#eab308";
+      }
 
       function renderMap(events) {
-        const container = document.getElementById("map-view");
-        // Count events per state
-        const stateCounts = {};
-        const stateEvents = {};
+        const panel = document.getElementById("map-panel");
+
+        // Group events by city
+        const cityEvents = {};
         events.forEach((e) => {
-          if (e.state) {
-            stateCounts[e.state] = (stateCounts[e.state] || 0) + 1;
-            if (!stateEvents[e.state]) stateEvents[e.state] = [];
-            stateEvents[e.state].push(e);
-          }
+          const city = e.location;
+          if (!city || !CITY_COORDS[city]) return;
+          if (!cityEvents[city]) cityEvents[city] = [];
+          cityEvents[city].push(e);
         });
 
-        function stateColor(count) {
-          if (!count || count === 0) return "#e2e8f0";
-          if (count <= 2) return "#99f6e4";
-          if (count <= 5) return "#2dd4bf";
-          if (count <= 10) return "#0d9488";
-          return "#065f46";
+        // Initialize Leaflet map once
+        if (!leafletMap) {
+          leafletMap = L.map("leaflet-map", { zoomControl: true }).setView(
+            [39.8, -98.5],
+            4,
+          );
+          L.tileLayer(
+            "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+            {
+              attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+              subdomains: "abcd",
+              maxZoom: 19,
+            },
+          ).addTo(leafletMap);
+          leafletMarkers = L.layerGroup().addTo(leafletMap);
         }
 
-        // Build SVG
-        let svgPaths = "";
-        Object.keys(US_STATE_PATHS).forEach((st) => {
-          const cnt = stateCounts[st] || 0;
-          const fill = stateColor(cnt);
-          const sel = mapSelectedState === st ? " selected" : "";
-          svgPaths += `<path class="state-path${sel}" id="st-${st}" d="${US_STATE_PATHS[st]}" fill="${fill}" data-state="${st}" data-count="${cnt}"/>`;
+        // Clear old markers
+        leafletMarkers.clearLayers();
+
+        // Add circle markers for each city
+        Object.entries(cityEvents).forEach(([city, evts]) => {
+          const coords = CITY_COORDS[city];
+          if (!coords) return;
+          const count = evts.length;
+          const avgScore = evts.reduce((s, e) => s + e.score, 0) / count;
+          const radius = Math.min(8 + count * 4, 25);
+          const color = markerColor(avgScore);
+
+          const marker = L.circleMarker(coords, {
+            radius: radius,
+            fillColor: color,
+            color: "#fff",
+            weight: 1.5,
+            opacity: 0.9,
+            fillOpacity: 0.8,
+          });
+
+          marker.bindTooltip(
+            `${city}: ${count} event${count !== 1 ? "s" : ""}`,
+            {
+              direction: "top",
+              className: "leaflet-tooltip-custom",
+            },
+          );
+
+          marker.on("click", function () {
+            mapSelectedCity = city;
+            updateMapPanel(cityEvents);
+          });
+
+          leafletMarkers.addLayer(marker);
         });
 
-        let panelHTML = "";
-        if (mapSelectedState && stateEvents[mapSelectedState]) {
-          const stEvents = stateEvents[mapSelectedState];
-          panelHTML = `<div class="map-panel-header">${STATE_NAMES[mapSelectedState] || mapSelectedState} &mdash; ${stEvents.length} event${stEvents.length !== 1 ? "s" : ""}</div>
-          <div class="map-panel-body">
-            <button class="map-back-btn" onclick="mapSelectedState=null;render();">&larr; All States</button>`;
-          stEvents.sort((a, b) => b.score - a.score);
-          stEvents.forEach((e) => {
-            panelHTML += `<div class="map-event-card" onclick="showEventModal(${e.id})">
+        // Force map to resize properly
+        setTimeout(() => {
+          if (leafletMap) leafletMap.invalidateSize();
+        }, 100);
+
+        // Update panel
+        updateMapPanel(cityEvents);
+      }
+
+      function updateMapPanel(cityEvents) {
+        const panel = document.getElementById("map-panel");
+        let html = "";
+
+        if (mapSelectedCity && cityEvents[mapSelectedCity]) {
+          const evts = cityEvents[mapSelectedCity];
+          html += `<div class="map-panel-header">${mapSelectedCity} &mdash; ${evts.length} event${evts.length !== 1 ? "s" : ""}</div>`;
+          html += `<button class="map-back-btn" onclick="mapSelectedCity=null;render();">&larr; All Cities</button>`;
+          evts.sort((a, b) => b.score - a.score);
+          evts.forEach((e) => {
+            html += `<div class="map-event-card" onclick="showEventModal(${e.id})">
               <div class="mec-name">${e.name}</div>
               <div class="mec-dates">${e.dates} &middot; ${e.location}</div>
               <div class="mec-footer">
@@ -2755,73 +3321,31 @@
               </div>
             </div>`;
           });
-          panelHTML += `</div>`;
         } else {
-          // Overview: top states sorted by count
-          const sorted = Object.entries(stateCounts).sort(
-            (a, b) => b[1] - a[1],
+          const sorted = Object.entries(cityEvents).sort(
+            (a, b) => b[1].length - a[1].length,
           );
-          panelHTML = `<div class="map-panel-header">Events by State</div><div class="map-panel-body">`;
+          html += `<div class="map-panel-header">Events by City</div>`;
           if (sorted.length === 0) {
-            panelHTML += `<p style="color:var(--gray-400);text-align:center;padding:20px 0;">No events with state data match current filters.</p>`;
+            html += `<p style="color:var(--gray-400);text-align:center;padding:20px 0;">No events match current filters.</p>`;
           } else {
-            sorted.forEach(([st, cnt]) => {
-              panelHTML += `<div class="map-state-row" onclick="mapSelectedState='${st}';render();">
-                <span class="map-state-name">${STATE_NAMES[st] || st}</span>
-                <span class="map-state-count">${cnt}</span>
+            sorted.forEach(([city, evts]) => {
+              html += `<div class="map-city-row" onclick="mapSelectedCity='${city.replace(/'/g, "\\'")}';render();">
+                <span class="map-city-name">${city}</span>
+                <span class="map-city-count">${evts.length}</span>
               </div>`;
             });
           }
-          panelHTML += `</div>`;
         }
 
         // Legend
-        const legendHTML = `<div style="display:flex;gap:14px;align-items:center;margin-top:16px;font-size:0.78rem;color:var(--gray-500);flex-wrap:wrap;">
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:14px;border-radius:3px;background:#e2e8f0;display:inline-block;"></span> 0</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:14px;border-radius:3px;background:#99f6e4;display:inline-block;"></span> 1-2</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:14px;border-radius:3px;background:#2dd4bf;display:inline-block;"></span> 3-5</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:14px;border-radius:3px;background:#0d9488;display:inline-block;"></span> 6-10</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span style="width:14px;height:14px;border-radius:3px;background:#065f46;display:inline-block;"></span> 10+</span>
+        html += `<div class="map-legend">
+          <span><span class="map-legend-dot" style="background:#22c55e"></span> Score 9-10</span>
+          <span><span class="map-legend-dot" style="background:#0d9488"></span> Score 7-8</span>
+          <span><span class="map-legend-dot" style="background:#eab308"></span> Score 5-6</span>
         </div>`;
 
-        container.innerHTML = `
-          <div class="map-svg-wrap">
-            <svg viewBox="60 60 730 500" xmlns="http://www.w3.org/2000/svg">${svgPaths}</svg>
-            ${legendHTML}
-          </div>
-          <div class="map-panel">${panelHTML}</div>
-        `;
-
-        // Tooltip
-        if (!mapTooltipEl) {
-          mapTooltipEl = document.createElement("div");
-          mapTooltipEl.className = "map-tooltip";
-          document.body.appendChild(mapTooltipEl);
-        }
-
-        container.querySelectorAll(".state-path").forEach((path) => {
-          path.addEventListener("mouseenter", (ev) => {
-            const st = path.dataset.state;
-            const cnt = parseInt(path.dataset.count) || 0;
-            const name = STATE_NAMES[st] || st;
-            mapTooltipEl.textContent = `${name}: ${cnt} event${cnt !== 1 ? "s" : ""}`;
-            mapTooltipEl.classList.add("visible");
-          });
-          path.addEventListener("mousemove", (ev) => {
-            mapTooltipEl.style.left = ev.clientX + 12 + "px";
-            mapTooltipEl.style.top = ev.clientY - 30 + "px";
-          });
-          path.addEventListener("mouseleave", () => {
-            mapTooltipEl.classList.remove("visible");
-          });
-          path.addEventListener("click", () => {
-            const st = path.dataset.state;
-            if (stateCounts[st]) {
-              mapSelectedState = st;
-              render();
-            }
-          });
-        });
+        panel.innerHTML = html;
       }
 
       function showEventModal(eventId) {
@@ -2847,6 +3371,33 @@
         }
         if (e.exhibitor_url) {
           actionsHTML += `<a href="${e.exhibitor_url}" target="_blank" rel="noopener" class="modal-btn-secondary">&#128188; Exhibitor / Sponsor Info</a>`;
+        }
+
+        // ROI section
+        let roiHTML = "";
+        if (e.roi) {
+          const r = e.roi;
+          const vBadge =
+            r.verdict === "GO"
+              ? '<span class="verdict-go" style="font-size:14px;padding:6px 16px;">GO</span>'
+              : '<span class="verdict-nogo" style="font-size:14px;padding:6px 16px;">NO-GO</span>';
+          const fmtDollar = (v) => "$" + Math.round(v).toLocaleString();
+          const fmtPct = (v) => (v * 100).toFixed(1) + "%";
+          roiHTML = `
+            <div class="roi-section">
+              <div class="roi-section-title">ROI Analysis</div>
+              <div style="margin-bottom:12px;">${vBadge} <span style="margin-left:10px;font-size:14px;color:var(--gray-600);">${r.assessment}</span></div>
+              <div class="roi-grid">
+                <div class="roi-grid-item"><div class="rgi-label">Total Cost</div><div class="rgi-value">${fmtDollar(r.totalCost)}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Convos Needed</div><div class="rgi-value ${r.conversationsNeeded <= r.repCapacity ? "favorable" : "unfavorable"}">${r.conversationsNeeded}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Penetration Rate</div><div class="rgi-value ${r.penetrationRate <= 0.3 ? "favorable" : "unfavorable"}">${fmtPct(r.penetrationRate)}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Rep Capacity</div><div class="rgi-value">${r.repCapacity}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Capacity Gap</div><div class="rgi-value ${r.capacityGap >= 0 ? "favorable" : "unfavorable"}">${r.capacityGap >= 0 ? "+" : ""}${r.capacityGap}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Expected Deals</div><div class="rgi-value">${r.expectedDeals.toFixed(1)}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Expected Revenue</div><div class="rgi-value ${r.expectedRevenue > r.totalCost ? "favorable" : "unfavorable"}">${fmtDollar(r.expectedRevenue)}</div></div>
+                <div class="roi-grid-item"><div class="rgi-label">Projected ROI</div><div class="rgi-value ${r.projectedROI >= 0 ? "favorable" : "unfavorable"}">${fmtPct(r.projectedROI)}</div></div>
+              </div>
+            </div>`;
         }
 
         const backdrop = document.createElement("div");
@@ -2875,6 +3426,7 @@
                 <div class="modal-why-title">Why This Event Matters for Upwards</div>
                 <div class="modal-why-text">${e.why}</div>
               </div>
+              ${roiHTML}
               <div class="modal-actions">
                 ${actionsHTML}
               </div>
@@ -2915,7 +3467,7 @@
           document.getElementById("calendar-view").style.display = "";
         } else if (currentView === "map") {
           renderMap(filtered);
-          document.getElementById("map-view").style.display = "";
+          document.getElementById("map-view").style.display = "flex";
         } else {
           renderTable(filtered);
           document.getElementById("table-view").style.display = "";
@@ -2931,6 +3483,9 @@
         .addEventListener("change", render);
       document
         .getElementById("filter-month")
+        .addEventListener("change", render);
+      document
+        .getElementById("filter-verdict")
         .addEventListener("change", render);
       document
         .getElementById("filter-search")
