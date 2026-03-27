@@ -1539,6 +1539,161 @@
           grid-template-columns: 1fr;
         }
       }
+      /* Custom Event Form */
+      .custom-event-form {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        margin-top: 24px;
+        box-shadow: var(--shadow-sm);
+      }
+      .custom-event-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 4px;
+      }
+      .custom-event-subtitle {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin-bottom: 20px;
+      }
+      .custom-form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+      }
+      .custom-form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .custom-form-field label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .custom-form-field input,
+      .custom-form-field select,
+      .custom-form-field textarea {
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        padding: 8px 12px;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--gray-700);
+        outline: none;
+        width: 100%;
+      }
+      .custom-form-field textarea {
+        min-height: 60px;
+        resize: vertical;
+      }
+      .custom-form-field input:focus,
+      .custom-form-field select:focus,
+      .custom-form-field textarea:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+      }
+      .custom-form-wide {
+        grid-column: span 2;
+      }
+      .add-event-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 24px;
+        background: var(--teal);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        margin-top: 16px;
+      }
+      .add-event-btn:hover {
+        background: var(--teal-light);
+      }
+      .custom-events-list {
+        margin-top: 16px;
+        border-top: 1px solid var(--gray-200);
+        padding-top: 16px;
+      }
+      .custom-event-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--gray-100);
+      }
+      .custom-event-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .custom-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: var(--gray-200);
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .remove-custom-btn {
+        font-size: 12px;
+        padding: 4px 10px;
+        border: 1px solid var(--red);
+        color: var(--red);
+        background: transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .remove-custom-btn:hover {
+        background: #fef2f2;
+      }
+
+      /* Smart defaults toggle */
+      .smart-defaults-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        font-size: 13px;
+        color: var(--gray-600);
+      }
+      .smart-defaults-toggle input[type="checkbox"] {
+        accent-color: var(--teal);
+        width: 16px;
+        height: 16px;
+      }
+      .smart-defaults-toggle label {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      @media (max-width: 768px) {
+        .custom-form-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .custom-form-wide {
+          grid-column: span 2;
+        }
+      }
+      @media (max-width: 480px) {
+        .custom-form-grid {
+          grid-template-columns: 1fr;
+        }
+        .custom-form-wide {
+          grid-column: span 1;
+        }
+      }
     </style>
   </head>
   <body>
@@ -2952,6 +3107,29 @@
         },
       ];
 
+      // Load custom events from localStorage
+      let customNextId = 1000;
+      (function loadCustomEvents() {
+        const saved = JSON.parse(localStorage.getItem("customEvents") || "[]");
+        saved.forEach((ce) => {
+          ce.isCustom = true;
+          EVENTS.push(ce);
+          if (ce.id >= customNextId) customNextId = ce.id + 1;
+        });
+      })();
+
+      function saveCustomEvents() {
+        const customs = EVENTS.filter((e) => e.isCustom);
+        localStorage.setItem("customEvents", JSON.stringify(customs));
+      }
+
+      // Industry color map for custom events
+      const INDUSTRY_COLORS = {};
+      EVENTS.forEach((e) => {
+        if (!INDUSTRY_COLORS[e.industry]) INDUSTRY_COLORS[e.industry] = e.color;
+      });
+      INDUSTRY_COLORS["Other"] = "#6b7280";
+
       // Extract state code from location
       const STATE_ABBR = [
         "AL",
@@ -3118,6 +3296,33 @@
         expectedValuePerMeeting: 700,
       };
 
+      // Smart defaults toggle - persisted
+      let useSmartDefaults = JSON.parse(
+        localStorage.getItem("useSmartDefaults") ?? "true",
+      );
+
+      function getSmartDefaults(attendees, gp) {
+        const p = { ...gp };
+        if (attendees <= 500) {
+          p.numReps = 1;
+          p.sponsorshipCost = 2000;
+          p.eventDays = 2;
+        } else if (attendees <= 2000) {
+          p.numReps = 2;
+          p.sponsorshipCost = 5000;
+          p.eventDays = 2;
+        } else if (attendees <= 10000) {
+          p.numReps = 2;
+          p.sponsorshipCost = 7500;
+          p.eventDays = 3;
+        } else {
+          p.numReps = 3;
+          p.sponsorshipCost = 15000;
+          p.eventDays = 3;
+        }
+        return p;
+      }
+
       // Per-event overrides persisted in localStorage
       let eventOverrides = JSON.parse(
         localStorage.getItem("eventOverrides") || "{}",
@@ -3127,9 +3332,13 @@
         localStorage.setItem("eventOverrides", JSON.stringify(eventOverrides));
       }
 
-      function getEventParams(eventId) {
+      function getEventParams(eventId, attendees) {
+        const base =
+          useSmartDefaults && attendees != null
+            ? getSmartDefaults(attendees, globalParams)
+            : globalParams;
         const overrides = eventOverrides[eventId] || {};
-        return { ...globalParams, ...overrides };
+        return { ...base, ...overrides };
       }
 
       function hasOverrides(eventId) {
@@ -3164,8 +3373,8 @@
         };
       }
 
-      function getEventROIParams(eventId) {
-        const p = getEventParams(eventId);
+      function getEventROIParams(eventId, attendees) {
+        const p = getEventParams(eventId, attendees);
         return {
           sponsorshipCost: p.sponsorshipCost,
           numReps: p.numReps,
@@ -3245,7 +3454,7 @@
       function computeAllROI() {
         EVENTS.forEach((e) => {
           const attendees = parseAttendees(e.attendance);
-          const params = getEventROIParams(e.id);
+          const params = getEventROIParams(e.id, attendees);
           e.roi = computeROI(attendees, params);
         });
       }
@@ -3455,7 +3664,7 @@
 
           tableHTML += `<tr class="${rowClass}" style="cursor:pointer">
             <td onclick="showEventModal(${e.id})" style="font-weight:600;color:var(--navy);min-width:180px">${e.name}</td>
-            <td onclick="showEventModal(${e.id})"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span></td>
+            <td onclick="showEventModal(${e.id})"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}</td>
             <td onclick="showEventModal(${e.id})" class="table-icp ${icpClass(e.score)}" style="background:none;text-align:center">${e.score}</td>
             <td onclick="showEventModal(${e.id})">${e.attendance}</td>
             <td onclick="showEventModal(${e.id})">${verdictBadge}</td>
@@ -3473,7 +3682,7 @@
 
           // Inline override panel
           if (openOverrideId === e.id) {
-            const ep = getEventParams(e.id);
+            const ep = getEventParams(e.id, parseAttendees(e.attendance));
             tableHTML += `<tr class="${rowClass}"><td colspan="15" style="padding:0">
               <div class="override-panel">
                 <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">Override Parameters for ${e.name}</div>
@@ -3498,6 +3707,10 @@
           <div class="roi-global-params">
             <div class="roi-global-title">Global Assumptions</div>
             <div class="roi-global-subtitle">These defaults apply to all events unless overridden per-event</div>
+            <div class="smart-defaults-toggle">
+              <input type="checkbox" id="smart-defaults-toggle" ${useSmartDefaults ? "checked" : ""} onchange="toggleSmartDefaults(this.checked)" />
+              <label for="smart-defaults-toggle">Use smart defaults by event size (auto-scale reps, sponsorship, days)</label>
+            </div>
             ${paramsHTML}
             <button class="roi-recalc-btn" onclick="applyGlobalParams()">Apply to All Events</button>
           </div>
@@ -3522,8 +3735,248 @@
           <div class="roi-table-wrap">
             ${tableHTML}
           </div>
+          ${renderCustomEventForm()}
         `;
       }
+
+      function renderCustomEventForm() {
+        const allIndustries = [
+          "Cross-Industry",
+          "Healthcare",
+          "Hospitality",
+          "Manufacturing",
+          "Retail",
+          "Transportation / Logistics",
+          "Staffing / Workforce",
+          "Quick-Service Restaurants",
+          "Senior Care / Home Health",
+          "Grocery / Supermarket",
+          "Facilities / Janitorial",
+          "Construction / Trades",
+          "Agriculture",
+          "Other",
+        ];
+        const months = [
+          "Apr 2026",
+          "May 2026",
+          "Jun 2026",
+          "Jul 2026",
+          "Aug 2026",
+          "Sep 2026",
+          "Oct 2026",
+          "Nov 2026",
+          "Dec 2026",
+          "Jan 2027",
+          "Feb 2027",
+          "Mar 2027",
+        ];
+        const icpOptions = Array.from({ length: 10 }, (_, i) => i + 1)
+          .map(
+            (v) =>
+              `<option value="${v}" ${v === 5 ? "selected" : ""}>${v}</option>`,
+          )
+          .join("");
+        const industryOptions = allIndustries
+          .map((i) => `<option value="${i}">${i}</option>`)
+          .join("");
+        const monthOptions = months
+          .map((m) => `<option value="${m}">${m}</option>`)
+          .join("");
+
+        // List of current custom events
+        const customEvents = EVENTS.filter((e) => e.isCustom);
+        let listHTML = "";
+        if (customEvents.length > 0) {
+          listHTML = '<div class="custom-events-list">';
+          customEvents.forEach((ce) => {
+            listHTML += `<div class="custom-event-row">
+              <div class="custom-event-info">
+                <span class="custom-badge">Custom</span>
+                <strong>${ce.name}</strong>
+                <span style="color:var(--gray-500);font-size:13px">${ce.dates} &middot; ${ce.location} &middot; ${ce.industry}</span>
+              </div>
+              <button class="remove-custom-btn" onclick="removeCustomEvent(${ce.id})">Remove</button>
+            </div>`;
+          });
+          listHTML += "</div>";
+        }
+
+        return `<div class="custom-event-form">
+          <div class="custom-event-title">Add Custom Event</div>
+          <div class="custom-event-subtitle">Add your own events to score and compare alongside researched events</div>
+          <div class="custom-form-grid">
+            <div class="custom-form-field">
+              <label>Event Name *</label>
+              <input type="text" id="custom-name" placeholder="e.g. SHRM Annual" required />
+            </div>
+            <div class="custom-form-field">
+              <label>Dates</label>
+              <input type="text" id="custom-dates" placeholder="e.g. Jun 15-17" />
+            </div>
+            <div class="custom-form-field">
+              <label>Month</label>
+              <select id="custom-month">${monthOptions}</select>
+            </div>
+            <div class="custom-form-field">
+              <label>Location</label>
+              <input type="text" id="custom-location" placeholder="e.g. Dallas, TX" />
+            </div>
+            <div class="custom-form-field">
+              <label>Industry</label>
+              <select id="custom-industry">${industryOptions}</select>
+            </div>
+            <div class="custom-form-field">
+              <label>Estimated Attendance *</label>
+              <input type="number" id="custom-attendance" placeholder="e.g. 5000" min="1" required />
+            </div>
+            <div class="custom-form-field">
+              <label>ICP Score (1-10)</label>
+              <select id="custom-icp">${icpOptions}</select>
+            </div>
+            <div class="custom-form-field">
+              <label>Event URL</label>
+              <input type="text" id="custom-url" placeholder="https://..." />
+            </div>
+            <div class="custom-form-field">
+              <label>Exhibitor URL</label>
+              <input type="text" id="custom-exhibitor-url" placeholder="https://..." />
+            </div>
+            <div class="custom-form-field custom-form-wide">
+              <label>Why It Matters</label>
+              <textarea id="custom-why" placeholder="Optional notes on why this event is relevant..."></textarea>
+            </div>
+          </div>
+          <button class="add-event-btn" onclick="addCustomEvent()">Add Event</button>
+          ${listHTML}
+        </div>`;
+      }
+
+      function addCustomEvent() {
+        const name = document.getElementById("custom-name").value.trim();
+        const attendance = document.getElementById("custom-attendance").value;
+        if (!name) {
+          alert("Event name is required.");
+          return;
+        }
+        if (!attendance || parseInt(attendance) < 1) {
+          alert("Estimated attendance is required.");
+          return;
+        }
+
+        const industry = document.getElementById("custom-industry").value;
+        const color =
+          INDUSTRY_COLORS[industry] || INDUSTRY_COLORS["Other"] || "#6b7280";
+
+        const newEvent = {
+          id: customNextId++,
+          name: name,
+          dates: document.getElementById("custom-dates").value.trim() || "TBD",
+          month: document.getElementById("custom-month").value,
+          location:
+            document.getElementById("custom-location").value.trim() || "TBD",
+          industry: industry,
+          color: color,
+          score: parseInt(document.getElementById("custom-icp").value) || 5,
+          attendance: parseInt(attendance).toLocaleString(),
+          url: document.getElementById("custom-url").value.trim() || null,
+          exhibitor_url:
+            document.getElementById("custom-exhibitor-url").value.trim() ||
+            null,
+          why:
+            document.getElementById("custom-why").value.trim() ||
+            "Custom event added by user.",
+          isCustom: true,
+        };
+
+        // Assign state
+        const locParts = (newEvent.location || "")
+          .split(",")
+          .map((s) => s.trim());
+        const lastPart = locParts[locParts.length - 1];
+        const stateAbbrs = [
+          "AL",
+          "AK",
+          "AZ",
+          "AR",
+          "CA",
+          "CO",
+          "CT",
+          "DC",
+          "DE",
+          "FL",
+          "GA",
+          "HI",
+          "ID",
+          "IL",
+          "IN",
+          "IA",
+          "KS",
+          "KY",
+          "LA",
+          "ME",
+          "MD",
+          "MA",
+          "MI",
+          "MN",
+          "MS",
+          "MO",
+          "MT",
+          "NE",
+          "NV",
+          "NH",
+          "NJ",
+          "NM",
+          "NY",
+          "NC",
+          "ND",
+          "OH",
+          "OK",
+          "OR",
+          "PA",
+          "RI",
+          "SC",
+          "SD",
+          "TN",
+          "TX",
+          "UT",
+          "VT",
+          "VA",
+          "WA",
+          "WV",
+          "WI",
+          "WY",
+        ];
+        newEvent.state = stateAbbrs.includes(lastPart) ? lastPart : null;
+
+        EVENTS.push(newEvent);
+        saveCustomEvents();
+        computeAllROI();
+        // Update stat
+        const statEl = document.getElementById("stat-events");
+        if (statEl) statEl.textContent = EVENTS.length;
+        const statTop = document.getElementById("stat-top");
+        if (statTop)
+          statTop.textContent = EVENTS.filter((e) => e.score >= 9).length;
+        render();
+      }
+      window.addCustomEvent = addCustomEvent;
+
+      function removeCustomEvent(eventId) {
+        const idx = EVENTS.findIndex((e) => e.id === eventId);
+        if (idx !== -1) EVENTS.splice(idx, 1);
+        // Also remove any overrides
+        delete eventOverrides[eventId];
+        saveOverrides();
+        saveCustomEvents();
+        computeAllROI();
+        const statEl = document.getElementById("stat-events");
+        if (statEl) statEl.textContent = EVENTS.length;
+        const statTop = document.getElementById("stat-top");
+        if (statTop)
+          statTop.textContent = EVENTS.filter((e) => e.score >= 9).length;
+        render();
+      }
+      window.removeCustomEvent = removeCustomEvent;
 
       function sortROITable(col) {
         if (roiSortCol === col) {
@@ -3599,6 +4052,17 @@
         render();
       }
       window.applyGlobalParams = applyGlobalParams;
+
+      function toggleSmartDefaults(checked) {
+        useSmartDefaults = checked;
+        localStorage.setItem(
+          "useSmartDefaults",
+          JSON.stringify(useSmartDefaults),
+        );
+        computeAllROI();
+        render();
+      }
+      window.toggleSmartDefaults = toggleSmartDefaults;
 
       // Modal override helpers
       function saveModalOverride(eventId) {
@@ -3699,6 +4163,10 @@
         return "icp-gray";
       }
 
+      function customBadgeHTML(e) {
+        return e.isCustom ? ' <span class="custom-badge">Custom</span>' : "";
+      }
+
       function renderCalendar(events) {
         const container = document.getElementById("calendar-view");
         if (events.length === 0) {
@@ -3760,7 +4228,7 @@
           <span>Deals: <strong>${roi.expectedDeals != null ? roi.expectedDeals.toFixed(1) : "-"}</strong></span>
         </div>
         <div class="event-tags">
-          <span class="industry-pill" style="background:${e.color}">${e.industry}</span>
+          <span class="industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}
         </div>
         <div class="expand-hint">Click for details</div>
         <div class="event-why">${e.why}</div>
@@ -3842,7 +4310,7 @@
       <td class="table-event-name" data-label="Event">${e.name}</td>
       <td data-label="Dates">${e.dates}</td>
       <td data-label="Location">${e.location}</td>
-      <td data-label="Industry"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span></td>
+      <td data-label="Industry"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}</td>
       <td class="table-icp ${icpClass(e.score)}" style="background:none" data-label="ICP Score">${e.score}</td>
       <td data-label="Attendance">${e.attendance}</td>
       <td data-label="Verdict">${verdictBadge}${hasOverrides(e.id) ? '<span class="customized-dot" title="Custom overrides active"></span>' : ""}</td>
@@ -4116,7 +4584,7 @@
               <div class="mec-name">${e.name}</div>
               <div class="mec-dates">${e.dates} &middot; ${e.location}</div>
               <div class="mec-footer">
-                <span class="industry-pill" style="background:${e.color}">${e.industry}</span>
+                <span class="industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}
                 <span class="icp-badge ${icpClass(e.score)}">${e.score}</span>
               </div>
             </div>`;
@@ -4183,7 +4651,7 @@
               : '<span class="verdict-nogo" style="font-size:14px;padding:6px 16px;">NO-GO</span>';
           const fmtDollar = (v) => "$" + Math.round(v).toLocaleString();
           const fmtPct = (v) => (v * 100).toFixed(1) + "%";
-          const ep = getEventParams(e.id);
+          const ep = getEventParams(e.id, parseAttendees(e.attendance));
           const hasOvr = hasOverrides(e.id);
           const ovrBadge = hasOvr
             ? '<span class="modal-override-badge">Custom overrides active</span>'
@@ -4227,7 +4695,7 @@
             <div class="modal-header">
               <div class="modal-name">${e.name}</div>
               <div class="modal-badges">
-                <span class="industry-pill" style="background:${e.color}">${e.industry}</span>
+                <span class="industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}
                 <span class="modal-icp-badge ${icpClass(e.score)}">
                   ${e.score}/10
                   <span class="modal-icp-label">${scoreLabel}</span>
