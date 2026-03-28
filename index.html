@@ -82,8 +82,11 @@
       .vote-btn:hover {
         transform: scale(1.2);
       }
-      .vote-btn.voted {
-        color: var(--teal);
+      .vote-btn.voted-up {
+        color: var(--green);
+      }
+      .vote-btn.voted-down {
+        color: var(--red);
       }
       .vote-count {
         font-size: 12px;
@@ -223,13 +226,18 @@
         justify-content: center;
       }
       .modal-vote-btn:hover {
-        border-color: var(--teal);
-        color: var(--teal);
+        border-color: var(--gray-300);
+        color: var(--gray-700);
       }
-      .modal-vote-btn.voted {
-        border-color: var(--teal);
-        background: var(--teal-bg);
-        color: var(--teal);
+      .modal-vote-btn.voted-up {
+        border-color: var(--green);
+        background: var(--green-bg);
+        color: #16a34a;
+      }
+      .modal-vote-btn.voted-down {
+        border-color: var(--red);
+        background: #fef2f2;
+        color: #dc2626;
       }
       .modal-voters-list {
         margin-top: 10px;
@@ -2098,8 +2106,10 @@
           <span class="filter-label">Votes</span>
           <select id="filter-votes">
             <option value="all">All Events</option>
-            <option value="voted">Voted Only</option>
-            <option value="mine">My Votes</option>
+            <option value="upvoted">Upvoted Only</option>
+            <option value="downvoted">Downvoted Only</option>
+            <option value="my-up">My Upvotes</option>
+            <option value="my-down">My Downvotes</option>
           </select>
         </div>
         <div class="filter-group">
@@ -2176,41 +2186,63 @@
       );
 
       // Team voting system
-      let allVotes = {}; // { eventId: ['Greg', 'Nikki'] }
+      let allVotes = {}; // { eventId: { up: ['Greg', 'Nikki'], down: ['Alex'] } }
       let currentUser = localStorage.getItem("teamMemberName") || "";
 
       async function loadVotes() {
         const { data, error } = await supabaseClient
           .from("event_votes")
-          .select("event_id, member_name");
+          .select("event_id, member_name, vote_type");
         if (error) {
           console.error("loadVotes error:", error);
           return;
         }
         allVotes = {};
         data.forEach((v) => {
-          if (!allVotes[v.event_id]) allVotes[v.event_id] = [];
-          allVotes[v.event_id].push(v.member_name);
+          if (!allVotes[v.event_id])
+            allVotes[v.event_id] = { up: [], down: [] };
+          const type = v.vote_type || "up";
+          allVotes[v.event_id][type].push(v.member_name);
         });
       }
 
-      async function toggleVote(eventId) {
+      async function castVote(eventId, type) {
         if (!currentUser) return;
-        const voters = allVotes[eventId] || [];
-        const hasVoted = voters.includes(currentUser);
+        const votes = allVotes[eventId] || { up: [], down: [] };
+        const currentType = votes.up.includes(currentUser)
+          ? "up"
+          : votes.down.includes(currentUser)
+            ? "down"
+            : null;
 
-        if (hasVoted) {
+        if (currentType === type) {
+          // Clicking same button = remove vote
           await supabaseClient
             .from("event_votes")
             .delete()
             .match({ event_id: eventId, member_name: currentUser });
-          allVotes[eventId] = voters.filter((n) => n !== currentUser);
+          allVotes[eventId][type] = allVotes[eventId][type].filter(
+            (n) => n !== currentUser,
+          );
         } else {
+          // Upsert vote (insert or update to new type)
           await supabaseClient
             .from("event_votes")
-            .insert({ event_id: eventId, member_name: currentUser });
-          if (!allVotes[eventId]) allVotes[eventId] = [];
-          allVotes[eventId].push(currentUser);
+            .upsert(
+              { event_id: eventId, member_name: currentUser, vote_type: type },
+              { onConflict: "event_id,member_name" },
+            );
+          // Update local state
+          if (!allVotes[eventId]) allVotes[eventId] = { up: [], down: [] };
+          // Remove from opposite
+          allVotes[eventId].up = allVotes[eventId].up.filter(
+            (n) => n !== currentUser,
+          );
+          allVotes[eventId].down = allVotes[eventId].down.filter(
+            (n) => n !== currentUser,
+          );
+          // Add to new type
+          allVotes[eventId][type].push(currentUser);
         }
         render();
         // Re-render modal if open
@@ -2220,33 +2252,36 @@
           showEventModal(eventId);
         }
       }
-      window.toggleVote = toggleVote;
+      window.castVote = castVote;
+
+      function getVoteData(eventId) {
+        const votes = allVotes[eventId] || { up: [], down: [] };
+        const upCount = votes.up.length;
+        const downCount = votes.down.length;
+        const userVote =
+          currentUser && votes.up.includes(currentUser)
+            ? "up"
+            : currentUser && votes.down.includes(currentUser)
+              ? "down"
+              : null;
+        return { votes, upCount, downCount, userVote };
+      }
 
       function getVoteHTML(eventId, style) {
-        const voters = allVotes[eventId] || [];
-        const hasVoted = currentUser && voters.includes(currentUser);
-        const starClass = hasVoted ? "voted" : "";
-        const star = hasVoted ? "\u2605" : "\u2606";
-        const count = voters.length;
+        const { votes, upCount, downCount, userVote } = getVoteData(eventId);
 
-        if (style === "table") {
-          const tooltipNames =
-            voters.length > 0 ? voters.join(", ") : "No votes";
-          return `<div class="vote-tooltip" style="display:inline-flex;align-items:center;gap:2px;" onclick="event.stopPropagation()">
-            <button class="vote-btn ${starClass}" onclick="event.stopPropagation();toggleVote(${eventId})">${star}</button>
-            <span class="vote-count">${count || ""}</span>
-            <span class="vote-tooltip-text">${tooltipNames}</span>
-          </div>`;
+        if (style === "table-up") {
+          return `<button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${votes.up.join(", ") || "None"}">${upCount || "0"}</button>`;
+        }
+
+        if (style === "table-down") {
+          return `<button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${votes.down.join(", ") || "None"}">${downCount || "0"}</button>`;
         }
 
         if (style === "calendar") {
-          const names =
-            voters.slice(0, 2).join(", ") +
-            (voters.length > 2 ? " +" + (voters.length - 2) : "");
-          return `<div class="calendar-vote-row" onclick="event.stopPropagation()">
-            <button class="vote-btn ${starClass}" onclick="event.stopPropagation();toggleVote(${eventId})">${star}</button>
-            <span class="vote-count">${count || ""}</span>
-            ${voters.length > 0 ? '<span class="vote-names">' + names + "</span>" : ""}
+          return `<div style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation()">
+            <button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${votes.up.join(", ") || "No upvotes"}">\uD83D\uDC4D ${upCount || ""}</button>
+            <button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${votes.down.join(", ") || "No downvotes"}">\uD83D\uDC4E ${downCount || ""}</button>
           </div>`;
         }
 
@@ -5121,11 +5156,21 @@
           return true;
         });
 
-        if (voteFilter === "voted") {
-          filtered = filtered.filter((e) => (allVotes[e.id] || []).length > 0);
-        } else if (voteFilter === "mine") {
+        if (voteFilter === "upvoted") {
+          filtered = filtered.filter(
+            (e) => (allVotes[e.id] || { up: [], down: [] }).up.length > 0,
+          );
+        } else if (voteFilter === "downvoted") {
+          filtered = filtered.filter(
+            (e) => (allVotes[e.id] || { up: [], down: [] }).down.length > 0,
+          );
+        } else if (voteFilter === "my-up") {
           filtered = filtered.filter((e) =>
-            (allVotes[e.id] || []).includes(currentUser),
+            (allVotes[e.id] || { up: [], down: [] }).up.includes(currentUser),
+          );
+        } else if (voteFilter === "my-down") {
+          filtered = filtered.filter((e) =>
+            (allVotes[e.id] || { up: [], down: [] }).down.includes(currentUser),
           );
         }
 
@@ -5193,6 +5238,7 @@
         <div class="event-card-top">
           <div class="event-name">${e.name}</div>
           <div style="display:flex;align-items:center;gap:6px">
+            ${getVoteHTML(e.id, "calendar")}
             ${verdictHtml}
             <div class="icp-badge ${icpClass(e.score)}">${e.score}</div>
           </div>
@@ -5210,7 +5256,6 @@
         <div class="event-tags">
           <span class="industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}
         </div>
-        ${getVoteHTML(e.id, "calendar")}
         <div class="expand-hint">Click for details</div>
         <div class="event-why">${e.why}</div>
       </div>`;
@@ -5236,9 +5281,17 @@
             return a.roi.verdict === "GO" ? -1 : 1;
           }
           let av, bv;
-          if (sortCol === "votes") {
-            av = (allVotes[a.id] || []).length;
-            bv = (allVotes[b.id] || []).length;
+          if (sortCol === "votes-up") {
+            av = (allVotes[a.id] || { up: [], down: [] }).up.length;
+            bv = (allVotes[b.id] || { up: [], down: [] }).up.length;
+          } else if (sortCol === "votes-down") {
+            av = (allVotes[a.id] || { up: [], down: [] }).down.length;
+            bv = (allVotes[b.id] || { up: [], down: [] }).down.length;
+          } else if (sortCol === "net-votes") {
+            const aV = allVotes[a.id] || { up: [], down: [] };
+            const bV = allVotes[b.id] || { up: [], down: [] };
+            av = aV.up.length - aV.down.length;
+            bv = bV.up.length - bV.down.length;
           } else {
             av = a[sortCol];
             bv = b[sortCol];
@@ -5261,7 +5314,9 @@
           { key: "projectedROI", label: "Proj. ROI" },
           { key: "expectedRevenue", label: "Exp. Revenue" },
           { key: "assessment", label: "Assessment" },
-          { key: "votes", label: "Votes" },
+          { key: "votes-up", label: "\uD83D\uDC4D" },
+          { key: "votes-down", label: "\uD83D\uDC4E" },
+          { key: "net-votes", label: "Net" },
         ];
 
         let html = `<table class="events-table"><thead><tr>`;
@@ -5305,7 +5360,9 @@
       <td data-label="Proj. ROI" style="font-weight:700;${roiColor}">${roiPct}</td>
       <td data-label="Revenue" style="font-weight:600">${expRev}</td>
       <td data-label="Assessment" style="font-size:12px;color:var(--gray-500);max-width:180px">${roi.assessment || "-"}</td>
-      <td data-label="Votes">${getVoteHTML(e.id, "table")}</td>
+      <td style="text-align:center" data-label="\uD83D\uDC4D">${getVoteHTML(e.id, "table-up")}</td>
+      <td style="text-align:center" data-label="\uD83D\uDC4E">${getVoteHTML(e.id, "table-down")}</td>
+      <td style="text-align:center;font-weight:600" data-label="Net">${(allVotes[e.id] || { up: [], down: [] }).up.length - (allVotes[e.id] || { up: [], down: [] }).down.length}</td>
     </tr>`;
         });
 
@@ -5688,14 +5745,34 @@
         }
 
         // Vote section for modal
-        const voters = allVotes[e.id] || [];
-        const hasVoted = currentUser && voters.includes(currentUser);
+        const {
+          votes: modalVotes,
+          upCount: modalUpCount,
+          downCount: modalDownCount,
+          userVote: modalUserVote,
+        } = getVoteData(e.id);
+        let voterChipsHTML = "";
+        if (modalVotes.up.length > 0) {
+          voterChipsHTML += `<div class="modal-voters-list"><span style="color:#16a34a;font-weight:600">\uD83D\uDC4D</span> ${modalVotes.up.map((n) => `<span class="modal-voter-chip" style="border:1px solid #bbf7d0">${n}</span>`).join("")}</div>`;
+        }
+        if (modalVotes.down.length > 0) {
+          voterChipsHTML += `<div class="modal-voters-list"><span style="color:#dc2626;font-weight:600">\uD83D\uDC4E</span> ${modalVotes.down.map((n) => `<span class="modal-voter-chip" style="border:1px solid #fecaca">${n}</span>`).join("")}</div>`;
+        }
+        if (modalVotes.up.length === 0 && modalVotes.down.length === 0) {
+          voterChipsHTML =
+            '<div class="modal-voters-list" style="color:var(--gray-400)">No votes yet</div>';
+        }
         const voteHTML = `
           <div class="modal-vote-section">
-            <button class="modal-vote-btn ${hasVoted ? "voted" : ""}" onclick="toggleVote(${e.id})">
-              ${hasVoted ? "\u2605 Remove Vote" : "\u2606 Vote for This Event"}
-            </button>
-            ${voters.length > 0 ? `<div class="modal-voters-list">${voters.map((n) => `<span class="modal-voter-chip">${n}</span>`).join("")}</div>` : '<div class="modal-voters-list" style="color:var(--gray-400)">No votes yet</div>'}
+            <div style="display:flex;gap:10px;margin-bottom:10px">
+              <button class="modal-vote-btn ${modalUserVote === "up" ? "voted-up" : ""}" onclick="castVote(${e.id},'up')" style="flex:1">
+                \uD83D\uDC4D ${modalUserVote === "up" ? "Upvoted" : "Upvote"} (${modalUpCount})
+              </button>
+              <button class="modal-vote-btn ${modalUserVote === "down" ? "voted-down" : ""}" onclick="castVote(${e.id},'down')" style="flex:1">
+                \uD83D\uDC4E ${modalUserVote === "down" ? "Downvoted" : "Downvote"} (${modalDownCount})
+              </button>
+            </div>
+            ${voterChipsHTML}
           </div>
         `;
 
