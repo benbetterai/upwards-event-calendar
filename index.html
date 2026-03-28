@@ -2271,11 +2271,11 @@
         const { votes, upCount, downCount, userVote } = getVoteData(eventId);
 
         if (style === "table-up") {
-          return `<button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${votes.up.join(", ") || "None"}">${upCount || "0"}</button>`;
+          return `<button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${votes.up.join(", ") || "None"}">\uD83D\uDC4D ${upCount || "0"}</button>`;
         }
 
         if (style === "table-down") {
-          return `<button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${votes.down.join(", ") || "None"}">${downCount || "0"}</button>`;
+          return `<button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${votes.down.join(", ") || "None"}">\uD83D\uDC4E ${downCount || "0"}</button>`;
         }
 
         if (style === "calendar") {
