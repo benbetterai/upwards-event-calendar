@@ -5305,6 +5305,9 @@
 
         const cols = [
           { key: "name", label: "Event" },
+          { key: "votes-up", label: "\uD83D\uDC4D" },
+          { key: "votes-down", label: "\uD83D\uDC4E" },
+          { key: "net-votes", label: "Net" },
           { key: "dates", label: "Dates" },
           { key: "location", label: "Location" },
           { key: "industry", label: "Industry" },
@@ -5314,9 +5317,6 @@
           { key: "projectedROI", label: "Proj. ROI" },
           { key: "expectedRevenue", label: "Exp. Revenue" },
           { key: "assessment", label: "Assessment" },
-          { key: "votes-up", label: "\uD83D\uDC4D" },
-          { key: "votes-down", label: "\uD83D\uDC4E" },
-          { key: "net-votes", label: "Net" },
         ];
 
         let html = `<table class="events-table"><thead><tr>`;
@@ -5351,6 +5351,9 @@
 
           html += `<tr style="animation-delay:${Math.min(i * 20, 500)}ms" onclick="showEventModal(${e.id})">
       <td class="table-event-name" data-label="Event">${e.name}</td>
+      <td style="text-align:center" data-label="\uD83D\uDC4D">${getVoteHTML(e.id, "table-up")}</td>
+      <td style="text-align:center" data-label="\uD83D\uDC4E">${getVoteHTML(e.id, "table-down")}</td>
+      <td style="text-align:center;font-weight:600" data-label="Net">${(allVotes[e.id] || { up: [], down: [] }).up.length - (allVotes[e.id] || { up: [], down: [] }).down.length}</td>
       <td data-label="Dates">${e.dates}</td>
       <td data-label="Location">${e.location}</td>
       <td data-label="Industry"><span class="table-industry-pill" style="background:${e.color}">${e.industry}</span>${customBadgeHTML(e)}</td>
@@ -5360,9 +5363,6 @@
       <td data-label="Proj. ROI" style="font-weight:700;${roiColor}">${roiPct}</td>
       <td data-label="Revenue" style="font-weight:600">${expRev}</td>
       <td data-label="Assessment" style="font-size:12px;color:var(--gray-500);max-width:180px">${roi.assessment || "-"}</td>
-      <td style="text-align:center" data-label="\uD83D\uDC4D">${getVoteHTML(e.id, "table-up")}</td>
-      <td style="text-align:center" data-label="\uD83D\uDC4E">${getVoteHTML(e.id, "table-down")}</td>
-      <td style="text-align:center;font-weight:600" data-label="Net">${(allVotes[e.id] || { up: [], down: [] }).up.length - (allVotes[e.id] || { up: [], down: [] }).down.length}</td>
     </tr>`;
         });
 
