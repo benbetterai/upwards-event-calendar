@@ -261,6 +261,18 @@
         font-size: 12px;
       }
 
+      .sync-error-banner {
+        display: none;
+        margin: 0 auto;
+        max-width: 1400px;
+        padding: 10px 20px;
+        background: #fef2f2;
+        color: #991b1b;
+        border-bottom: 1px solid #fecaca;
+        font-size: 14px;
+        text-align: center;
+      }
+
       /* Header */
       .header {
         background: linear-gradient(
@@ -2159,6 +2171,13 @@
     </nav>
 
     <div
+      id="sync-error-banner"
+      class="sync-error-banner"
+      role="alert"
+      aria-live="polite"
+    ></div>
+
+    <div
       class="calendar-container"
       id="calendar-view"
       style="display: none"
@@ -2185,67 +2204,166 @@
         SUPABASE_KEY,
       );
 
-      // Team voting system
-      let allVotes = {}; // { eventId: { up: ['Greg', 'Nikki'], down: ['Alex'] } }
-      let currentUser = localStorage.getItem("teamMemberName") || "";
+      // Team voting system — names trimmed; "your vote" matches case-insensitively
+      function normalizeTeamName(name) {
+        return String(name || "").trim();
+      }
 
+      function memberNamesMatch(a, b) {
+        return (
+          normalizeTeamName(a).toLowerCase() ===
+          normalizeTeamName(b).toLowerCase()
+        );
+      }
+
+      function voteListIncludes(voteList, userName) {
+        const u = normalizeTeamName(userName);
+        if (!u) return false;
+        return voteList.some((n) => memberNamesMatch(n, u));
+      }
+
+      function canonicalMemberNameForEvent(votes, userName) {
+        const u = normalizeTeamName(userName);
+        if (!u) return "";
+        const merged = [...(votes.up || []), ...(votes.down || [])];
+        const hit = merged.find((n) => memberNamesMatch(n, u));
+        return hit != null ? normalizeTeamName(hit) : u;
+      }
+
+      function showSyncError(message) {
+        const el = document.getElementById("sync-error-banner");
+        if (!el) return;
+        el.textContent = message;
+        el.style.display = "block";
+      }
+
+      function clearSyncError() {
+        const el = document.getElementById("sync-error-banner");
+        if (!el) return;
+        el.textContent = "";
+        el.style.display = "none";
+      }
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function escapeAttr(s) {
+        return String(s ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;")
+          .replace(/</g, "&lt;");
+      }
+
+      function escapeHtml(s) {
+        const d = document.createElement("div");
+        d.textContent = s == null ? "" : String(s);
+        return d.innerHTML;
+      }
+
+      /** False until initApp finishes (avoid voting before votes are loaded). */
+      let appVotesReady = false;
+
+      let allVotes = {}; // { eventId: { up: ['Greg', 'Nikki'], down: ['Alex'] } }
+      const rawStoredName = localStorage.getItem("teamMemberName") || "";
+      let currentUser = normalizeTeamName(rawStoredName);
+      if (!currentUser) {
+        localStorage.removeItem("teamMemberName");
+      } else if (rawStoredName !== currentUser) {
+        localStorage.setItem("teamMemberName", currentUser);
+      }
+
+      /** @returns {Promise<boolean>} true if votes were loaded from server */
       async function loadVotes() {
-        const { data, error } = await supabaseClient
-          .from("event_votes")
-          .select("event_id, member_name, vote_type");
-        if (error) {
-          console.error("loadVotes error:", error);
-          return;
+        clearSyncError();
+        let lastError = null;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const { data, error } = await supabaseClient
+            .from("event_votes")
+            .select("event_id, member_name, vote_type");
+          if (!error) {
+            allVotes = {};
+            if (data && Array.isArray(data)) {
+              data.forEach((v) => {
+                if (!allVotes[v.event_id])
+                  allVotes[v.event_id] = { up: [], down: [] };
+                const t = v.vote_type || "up";
+                allVotes[v.event_id][t].push(normalizeTeamName(v.member_name));
+              });
+            }
+            return true;
+          }
+          lastError = error;
+          console.warn("loadVotes attempt " + (attempt + 1) + ":", error);
+          if (attempt < 2) await sleep(350 * (attempt + 1));
         }
-        allVotes = {};
-        data.forEach((v) => {
-          if (!allVotes[v.event_id])
-            allVotes[v.event_id] = { up: [], down: [] };
-          const type = v.vote_type || "up";
-          allVotes[v.event_id][type].push(v.member_name);
-        });
+        console.error("loadVotes error:", lastError);
+        showSyncError(
+          "Could not load team votes from the server. Check your connection and refresh. (" +
+            (lastError && lastError.message ? lastError.message : "unknown") +
+            ")",
+        );
+        return false;
       }
 
       async function castVote(eventId, type) {
-        if (!currentUser) return;
+        if (!appVotesReady) return;
+        if (!normalizeTeamName(currentUser)) return;
         const votes = allVotes[eventId] || { up: [], down: [] };
-        const currentType = votes.up.includes(currentUser)
+        const nameForDb = canonicalMemberNameForEvent(votes, currentUser);
+        const currentType = voteListIncludes(votes.up, currentUser)
           ? "up"
-          : votes.down.includes(currentUser)
+          : voteListIncludes(votes.down, currentUser)
             ? "down"
             : null;
 
+        let writeError = null;
         if (currentType === type) {
-          // Clicking same button = remove vote
-          await supabaseClient
-            .from("event_votes")
-            .delete()
-            .match({ event_id: eventId, member_name: currentUser });
+          for (let attempt = 0; attempt < 2; attempt++) {
+            const { error } = await supabaseClient
+              .from("event_votes")
+              .delete()
+              .match({ event_id: eventId, member_name: nameForDb });
+            writeError = error;
+            if (!error) break;
+            if (attempt < 1) await sleep(400);
+          }
+          if (writeError) {
+            alert("Could not remove vote: " + writeError.message);
+            return;
+          }
           allVotes[eventId][type] = allVotes[eventId][type].filter(
-            (n) => n !== currentUser,
+            (n) => !memberNamesMatch(n, nameForDb),
           );
         } else {
-          // Upsert vote (insert or update to new type)
-          await supabaseClient
-            .from("event_votes")
-            .upsert(
-              { event_id: eventId, member_name: currentUser, vote_type: type },
-              { onConflict: "event_id,member_name" },
-            );
-          // Update local state
+          for (let attempt = 0; attempt < 2; attempt++) {
+            const { error } = await supabaseClient
+              .from("event_votes")
+              .upsert(
+                { event_id: eventId, member_name: nameForDb, vote_type: type },
+                { onConflict: "event_id,member_name" },
+              );
+            writeError = error;
+            if (!error) break;
+            if (attempt < 1) await sleep(400);
+          }
+          if (writeError) {
+            alert("Could not save vote: " + writeError.message);
+            return;
+          }
           if (!allVotes[eventId]) allVotes[eventId] = { up: [], down: [] };
-          // Remove from opposite
           allVotes[eventId].up = allVotes[eventId].up.filter(
-            (n) => n !== currentUser,
+            (n) => !memberNamesMatch(n, nameForDb),
           );
           allVotes[eventId].down = allVotes[eventId].down.filter(
-            (n) => n !== currentUser,
+            (n) => !memberNamesMatch(n, nameForDb),
           );
-          // Add to new type
-          allVotes[eventId][type].push(currentUser);
+          allVotes[eventId][type].push(nameForDb);
         }
+
+        await loadVotes();
         render();
-        // Re-render modal if open
         const modal = document.getElementById("event-modal");
         if (modal) {
           modal.remove();
@@ -2259,9 +2377,9 @@
         const upCount = votes.up.length;
         const downCount = votes.down.length;
         const userVote =
-          currentUser && votes.up.includes(currentUser)
+          currentUser && voteListIncludes(votes.up, currentUser)
             ? "up"
-            : currentUser && votes.down.includes(currentUser)
+            : currentUser && voteListIncludes(votes.down, currentUser)
               ? "down"
               : null;
         return { votes, upCount, downCount, userVote };
@@ -2269,19 +2387,25 @@
 
       function getVoteHTML(eventId, style) {
         const { votes, upCount, downCount, userVote } = getVoteData(eventId);
+        const upTitle = escapeAttr(votes.up.join(", ") || "None");
+        const downTitle = escapeAttr(votes.down.join(", ") || "None");
+        const calUpTitle = escapeAttr(votes.up.join(", ") || "No upvotes");
+        const calDownTitle = escapeAttr(
+          votes.down.join(", ") || "No downvotes",
+        );
 
         if (style === "table-up") {
-          return `<button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${votes.up.join(", ") || "None"}">\uD83D\uDC4D ${upCount || "0"}</button>`;
+          return `<button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${upTitle}">\uD83D\uDC4D ${upCount || "0"}</button>`;
         }
 
         if (style === "table-down") {
-          return `<button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${votes.down.join(", ") || "None"}">\uD83D\uDC4E ${downCount || "0"}</button>`;
+          return `<button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${downTitle}">\uD83D\uDC4E ${downCount || "0"}</button>`;
         }
 
         if (style === "calendar") {
           return `<div style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation()">
-            <button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${votes.up.join(", ") || "No upvotes"}">\uD83D\uDC4D ${upCount || ""}</button>
-            <button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${votes.down.join(", ") || "No downvotes"}">\uD83D\uDC4E ${downCount || ""}</button>
+            <button class="vote-btn ${userVote === "up" ? "voted-up" : ""}" onclick="event.stopPropagation();castVote(${eventId},'up')" title="${calUpTitle}">\uD83D\uDC4D ${upCount || ""}</button>
+            <button class="vote-btn ${userVote === "down" ? "voted-down" : ""}" onclick="event.stopPropagation();castVote(${eventId},'down')" title="${calDownTitle}">\uD83D\uDC4E ${downCount || ""}</button>
           </div>`;
         }
 
@@ -2310,7 +2434,7 @@
         input.focus();
 
         async function submitName() {
-          const name = input.value.trim();
+          const name = normalizeTeamName(input.value);
           if (!name) {
             input.style.borderColor = "#ef4444";
             return;
@@ -5166,11 +5290,17 @@
           );
         } else if (voteFilter === "my-up") {
           filtered = filtered.filter((e) =>
-            (allVotes[e.id] || { up: [], down: [] }).up.includes(currentUser),
+            voteListIncludes(
+              (allVotes[e.id] || { up: [], down: [] }).up,
+              currentUser,
+            ),
           );
         } else if (voteFilter === "my-down") {
           filtered = filtered.filter((e) =>
-            (allVotes[e.id] || { up: [], down: [] }).down.includes(currentUser),
+            voteListIncludes(
+              (allVotes[e.id] || { up: [], down: [] }).down,
+              currentUser,
+            ),
           );
         }
 
@@ -5753,10 +5883,10 @@
         } = getVoteData(e.id);
         let voterChipsHTML = "";
         if (modalVotes.up.length > 0) {
-          voterChipsHTML += `<div class="modal-voters-list"><span style="color:#16a34a;font-weight:600">\uD83D\uDC4D</span> ${modalVotes.up.map((n) => `<span class="modal-voter-chip" style="border:1px solid #bbf7d0">${n}</span>`).join("")}</div>`;
+          voterChipsHTML += `<div class="modal-voters-list"><span style="color:#16a34a;font-weight:600">\uD83D\uDC4D</span> ${modalVotes.up.map((n) => `<span class="modal-voter-chip" style="border:1px solid #bbf7d0">${escapeHtml(n)}</span>`).join("")}</div>`;
         }
         if (modalVotes.down.length > 0) {
-          voterChipsHTML += `<div class="modal-voters-list"><span style="color:#dc2626;font-weight:600">\uD83D\uDC4E</span> ${modalVotes.down.map((n) => `<span class="modal-voter-chip" style="border:1px solid #fecaca">${n}</span>`).join("")}</div>`;
+          voterChipsHTML += `<div class="modal-voters-list"><span style="color:#dc2626;font-weight:600">\uD83D\uDC4E</span> ${modalVotes.down.map((n) => `<span class="modal-voter-chip" style="border:1px solid #fecaca">${escapeHtml(n)}</span>`).join("")}</div>`;
         }
         if (modalVotes.up.length === 0 && modalVotes.down.length === 0) {
           voterChipsHTML =
@@ -6098,31 +6228,41 @@
 
       // Async initialization
       async function initApp() {
-        await loadCustomEvents();
-        await loadOverrides();
-        await loadVotes();
-        // Assign states to custom events loaded from Supabase
-        EVENTS.forEach((e) => {
-          if (e.isCustom && e.state === undefined) {
-            const loc = e.location || "";
-            const parts = loc.split(",").map((s) => s.trim());
-            const last = parts[parts.length - 1];
-            e.state = STATE_ABBR.includes(last) ? last : null;
+        try {
+          await loadCustomEvents();
+          await loadOverrides();
+          await loadVotes();
+          EVENTS.forEach((e) => {
+            if (e.isCustom && e.state === undefined) {
+              const loc = e.location || "";
+              const parts = loc.split(",").map((s) => s.trim());
+              const last = parts[parts.length - 1];
+              e.state = STATE_ABBR.includes(last) ? last : null;
+            }
+          });
+          computeAllROI();
+
+          if (!currentUser) {
+            showNamePrompt();
+          } else {
+            updateUserPill();
           }
-        });
-        computeAllROI();
 
-        if (!currentUser) {
-          showNamePrompt();
-        } else {
-          updateUserPill();
+          render();
+          document.getElementById("stat-top").textContent = EVENTS.filter(
+            (e) => e.score >= 9,
+          ).length;
+          document.getElementById("stat-total").textContent = EVENTS.length;
+        } catch (err) {
+          console.error("initApp error:", err);
+          showSyncError(
+            "Something went wrong loading the app. Refresh the page. (" +
+              (err && err.message ? err.message : "unknown") +
+              ")",
+          );
+        } finally {
+          appVotesReady = true;
         }
-
-        render();
-        document.getElementById("stat-top").textContent = EVENTS.filter(
-          (e) => e.score >= 9,
-        ).length;
-        document.getElementById("stat-total").textContent = EVENTS.length;
       }
       initApp();
     </script>
